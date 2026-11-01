@@ -3,535 +3,1066 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ที่พักเมืองรองริมโขง</title>
+<title>Thailand Stay Gap</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600&family=Noto+Serif+Thai:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: long-form river map — one reading column (~68ch) with figures that widen to 960px; a sticky "route" nav of numbered steps because the work really is a sequence */
+/* Layout: report-style app — a fixed header with 6 views (one question each); each view is short, reads top-down, pairs plain text with one chart, and ends with Back / Next */
 :root{
-  --bg:#f3f6f4; --surface:#ffffff; --ink:#13211e; --ink2:#46564f; --muted:#76857f; --line:#dbe3df; --grid:#e7edea;
-  --accent:#0d6b5f; --accent-soft:#dbeee9; --note:#fbf6e8; --note-line:#e9dcb4;
-  --target:#2a78d6; --analog:#eb6834; --dim:#c3ccc8; --dim-strong:#9aa7a2;
-  --good:#1a7f3c; --bad:#b4372c;
-  --f-display:'Noto Serif Thai','Sarabun',Georgia,serif;
-  --f-body:'Anuphan','Sarabun','Leelawadee UI','Thonburi',system-ui,sans-serif;
+  --bg:#f5f6f8; --surface:#ffffff; --raise:#f0f2f5; --ink:#141922; --ink2:#4b5463; --muted:#7a8391; --line:#e1e5ea; --grid:#eceff3;
+  --accent:#0f6b6b; --accent-ink:#ffffff; --accent-soft:#e2f0ef; --note:#fff8e6; --note-line:#f0dfb0; --note-ink:#7a5a00;
+  --target:#2a78d6; --analog:#eb6834; --pass:#0f6b6b; --dim:#d5dae1; --dim2:#9aa3af;
+  --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#6250d6; --good:#1a7f3c; --bad:#b4372c;
+  --f-body:'IBM Plex Sans Thai','Sarabun','Leelawadee UI','Thonburi',system-ui,sans-serif;
   --f-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0e1513; --surface:#151f1c; --ink:#e7eeeb; --ink2:#adbbb6; --muted:#7f8f89; --line:#27342f; --grid:#1f2a27;
-  --accent:#4fb3a3; --accent-soft:#183a34; --note:#252316; --note-line:#4a442a;
-  --target:#3987e5; --analog:#d95926; --dim:#3b4844; --dim-strong:#5d6c67; --good:#4cb06c; --bad:#e2685d; color-scheme:dark}}
+  --bg:#0e1117; --surface:#161a22; --raise:#1d222c; --ink:#e9ecf1; --ink2:#aab2bf; --muted:#7c8594; --line:#272d38; --grid:#202632;
+  --accent:#4fb3ac; --accent-ink:#0e1117; --accent-soft:#16302f; --note:#2a2414; --note-line:#4a3f1f; --note-ink:#e8c66a;
+  --target:#3987e5; --analog:#d95926; --pass:#4fb3ac; --dim:#2d3440; --dim2:#5f6a7a;
+  --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#9085e9; --good:#4cb06c; --bad:#e2685d; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0e1513; --surface:#151f1c; --ink:#e7eeeb; --ink2:#adbbb6; --muted:#7f8f89; --line:#27342f; --grid:#1f2a27;
-  --accent:#4fb3a3; --accent-soft:#183a34; --note:#252316; --note-line:#4a442a;
-  --target:#3987e5; --analog:#d95926; --dim:#3b4844; --dim-strong:#5d6c67; --good:#4cb06c; --bad:#e2685d; color-scheme:dark}
+  --bg:#0e1117; --surface:#161a22; --raise:#1d222c; --ink:#e9ecf1; --ink2:#aab2bf; --muted:#7c8594; --line:#272d38; --grid:#202632;
+  --accent:#4fb3ac; --accent-ink:#0e1117; --accent-soft:#16302f; --note:#2a2414; --note-line:#4a3f1f; --note-ink:#e8c66a;
+  --target:#3987e5; --analog:#d95926; --pass:#4fb3ac; --dim:#2d3440; --dim2:#5f6a7a;
+  --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#9085e9; --good:#4cb06c; --bad:#e2685d; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.75;margin:0}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.7;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
 a{color:var(--accent)}
-a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
-.wrap{max-width:960px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.read{max-width:68ch}
-h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.35;margin:0}
-h1{font-size:clamp(30px,5.2vw,48px);font-weight:700;letter-spacing:-.01em}
-h2{font-size:clamp(24px,3.4vw,32px);font-weight:700}
-h3{font-size:19px;font-weight:600;font-family:var(--f-body)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+h1,h2,h3{text-wrap:balance;line-height:1.35;margin:0}
+h1{font-size:clamp(28px,4.2vw,44px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:clamp(21px,2.4vw,26px);font-weight:600}
+h3{font-size:16px;font-weight:600}
 p{margin:0}
 .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
-.eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.gutter{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1120px;margin:0 auto}
 
-/* nav */
-nav.route{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
-nav.route .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px}
-nav.route .wrap::-webkit-scrollbar{display:none}
-nav.route a{flex:none;text-decoration:none;color:var(--ink2);font-size:14px;padding:4px 10px;border-radius:999px;white-space:nowrap}
-nav.route a:hover{background:var(--accent-soft);color:var(--ink)}
-nav.route a .num{color:var(--muted);margin-right:4px;font-size:12px}
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:16px;height:56px}
+.brand{display:grid;flex:none;color:var(--ink);text-decoration:none;line-height:1.25;min-width:0}
+.brand .name{font-weight:700;font-size:15px;white-space:nowrap}
+.brand .cur{display:none;font-size:13px;color:var(--accent);font-weight:600;white-space:nowrap}
+.icon{width:36px;height:36px;display:grid;place-items:center;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;cursor:pointer;padding:0}
+.icon:hover{background:var(--raise)}
+.icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#menuBtn .x{display:none}
+#menuBtn[aria-expanded="true"] .x{display:inline}
+#menuBtn[aria-expanded="true"] .ham{display:none}
+#theme .sun{display:none}
+:root[data-theme="dark"] #theme .sun{display:inline}
+:root[data-theme="dark"] #theme .moon{display:none}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #theme .sun{display:inline}:root:not([data-theme="light"]) #theme .moon{display:none}}
+nav.tabs{display:flex;gap:2px;flex:1;min-width:0;justify-content:center}
+nav.tabs a{color:var(--ink2);text-decoration:none;font-size:14px;font-weight:500;padding:6px 12px;border-radius:8px;white-space:nowrap}
+nav.tabs a:hover{background:var(--raise);color:var(--ink)}
+nav.tabs a[aria-current="page"]{background:var(--accent-soft);color:var(--accent)}
+nav.tabs a .n{font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-right:5px}
+.tools{display:flex;gap:6px;flex:none}
+.btn{font:inherit;font-size:13px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:5px 11px;cursor:pointer}
+.btn:hover{background:var(--raise)}
+#menuBtn{display:none !important}
+.drawer{display:none}
 
-/* hero */
-header.hero{padding-block:48px 28px}
-header.hero .wrap{display:grid;gap:22px}
-.lead{font-size:19px;color:var(--ink2);max-width:62ch}
-.answer{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:6px}
-.fact{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:2px;min-width:0}
-.fact b{font-family:var(--f-mono);font-size:26px;font-weight:500;color:var(--ink);line-height:1.2}
-.fact span{font-size:14px;color:var(--ink2);line-height:1.5}
-.path{display:flex;flex-wrap:wrap;align-items:center;gap:6px 4px;font-size:14px;color:var(--ink2)}
-.path .stop{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 12px}
-.path .stop.end{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:600}
-.path .arr{color:var(--muted)}
-
-/* sections */
-section.step{padding-block:44px;border-top:1px solid var(--line)}
-section.step .wrap{display:grid;gap:18px}
-.step-head{display:grid;gap:6px}
-.step-head .no{font-family:var(--f-mono);font-size:13px;color:var(--accent);letter-spacing:.06em}
-.why{font-size:15px;color:var(--ink2)}
-.analogy{background:var(--note);border:1px solid var(--note-line);border-radius:10px;padding:12px 16px;font-size:16px;max-width:68ch}
-.analogy::before{content:"เปรียบเหมือน";display:block;font-size:12px;letter-spacing:.06em;color:var(--muted);font-weight:600;margin-bottom:2px}
-.term{color:inherit;text-decoration:underline dotted var(--accent);text-underline-offset:4px;cursor:help}
-.term small{font-size:.78em;color:var(--muted)}
-ul.clean{margin:0;padding-left:1.1em;display:grid;gap:6px}
-.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:8px;align-content:start;min-width:0}
-.card .tag{font-size:12px;letter-spacing:.06em;color:var(--muted);font-weight:600}
-.card .big{font-family:var(--f-mono);font-size:22px}
-.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
-table{border-collapse:collapse;width:100%;font-size:15px;min-width:560px}
-th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-size:13px;color:var(--muted);font-weight:600;letter-spacing:.02em}
-tr:last-child td{border-bottom:0}
-td.bef{color:var(--bad)} td.aft{color:var(--good)}
-
-/* figures */
-figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 16px 10px;display:grid;gap:8px;min-width:0}
-figure .ft{font-weight:600;font-size:17px;line-height:1.45}
-figure .fs{font-size:14px;color:var(--ink2)}
-figcaption{font-size:13px;color:var(--muted)}
-.chart{position:relative;width:100%}
+/* views */
+main{padding-block:28px 72px}
+.view{display:grid;gap:22px}
+.view[hidden]{display:none}
+.vhead{display:grid;gap:8px;max-width:78ch}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--accent);text-transform:uppercase}
+.vhead .q{font-size:17px;color:var(--ink2)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:14px;min-width:0}
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:20px;align-items:start}
+.cols2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.text{display:grid;gap:10px;min-width:0}
+.text p,.text li{color:var(--ink2)}
+.text b,.panel b{color:var(--ink);font-weight:600}
+.text ul,.text ol{margin:0;padding-left:1.2em;display:grid;gap:4px}
+.like{background:var(--note);border:1px solid var(--note-line);border-radius:10px;padding:10px 14px;font-size:15px}
+.like::before{content:"เปรียบเหมือน · Analogy";display:block;font-size:11px;letter-spacing:.06em;color:var(--note-ink);font-weight:600}
+.term{color:inherit;text-decoration:underline dotted var(--accent);text-underline-offset:4px;cursor:pointer}
+.kpi{display:grid;gap:2px;padding:16px 18px;border-radius:12px;background:var(--surface);border:1px solid var(--line);min-width:0}
+.kpi .l{font-size:13px;color:var(--muted)}
+.kpi .v{font-family:var(--f-mono);font-size:28px;line-height:1.25}
+.kpi .d{font-size:14px;color:var(--ink2)}
+.funnel{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.funnel div{border-radius:10px;padding:10px 12px;background:var(--raise);display:grid;gap:0;min-width:0}
+.funnel div b{font-family:var(--f-mono);font-size:22px;font-weight:500}
+.funnel div span{font-size:13px;color:var(--ink2);line-height:1.45}
+.funnel div.end{background:var(--accent);color:var(--accent-ink)}
+.funnel div.end span,.funnel div.end b{color:var(--accent-ink)}
+.callout{border-left:3px solid var(--accent);padding:4px 0 4px 14px;color:var(--ink2);font-size:15px}
+.callout b{color:var(--ink)}
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+.t th,.t td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.t th{font-size:12px;color:var(--muted);font-weight:600}
+.t tr:last-child td{border-bottom:0}
+.tw{overflow-x:auto}
+.bef{color:var(--bad)} .aft{color:var(--good)}
+figure{margin:0;display:grid;gap:8px;min-width:0}
+figure .ft{font-weight:600;font-size:16px;line-height:1.45}
+figure .how{font-size:14px;color:var(--ink2);background:var(--raise);border-radius:8px;padding:8px 12px}
+figure .how b{color:var(--ink)}
+figcaption{font-size:12px;color:var(--muted)}
+.chart{position:relative;width:100%;min-height:80px}
 .chart svg{display:block;width:100%;height:auto;overflow:visible}
 .chart text{font-family:var(--f-body);fill:var(--ink2);font-size:12px}
-.chart .axis line,.chart .grid line{stroke:var(--grid)}
-.chart .base{stroke:var(--dim-strong)}
-.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink2)}
+.chart .dot{transition:transform .8s cubic-bezier(.6,.05,.25,1)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--ink2)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
-.legend i.line{border-radius:2px;height:3px;width:16px;vertical-align:3px}
-.tip{position:fixed;pointer-events:none;z-index:20;background:var(--ink);color:var(--bg);font-size:13px;line-height:1.5;padding:7px 10px;border-radius:6px;max-width:260px;opacity:0;transition:opacity .12s}
-.tip b{font-weight:600}
+.legend i.ln{width:16px;height:3px;border-radius:2px;vertical-align:3px}
+.legend i.sq{border-radius:2px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink2);border-radius:999px;padding:4px 12px;cursor:pointer}
-.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
-.members{font-size:14px;color:var(--ink2);line-height:1.7}
-.members b{color:var(--ink)}
-.kpi-row{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:14px;color:var(--ink2)}
-.kpi-row .num{color:var(--ink)}
-.pill{display:inline-block;font-size:12px;border-radius:999px;padding:1px 9px;font-weight:600}
+.chip{font:inherit;font-size:13px;background:var(--surface);color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.pill{display:inline-block;font-size:12px;border-radius:999px;padding:0 9px;font-weight:600}
 .pill.ok{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
 .pill.low{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
-.qa{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap}
-.qa .col{display:grid;gap:4px;justify-items:start}
-.qa .num{font-size:40px;line-height:1}
-.qa .arrow{font-size:28px;color:var(--muted);padding-bottom:6px}
-dl.gloss{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin:0;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
-dl.gloss>div{padding:12px 16px;border-bottom:1px solid var(--line);scroll-margin-top:70px}
-dl.gloss>div:last-child{border-bottom:0}
-dl.gloss>div:target{background:var(--accent-soft)}
+.pipe{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;counter-reset:none}
+.pipe li{background:var(--raise);border-radius:10px;padding:10px 12px;display:grid;gap:2px;align-content:start;min-width:0;position:relative;cursor:pointer;border:1px solid transparent}
+.pipe li:hover{border-color:var(--line)}
+.pipe li.hl{background:var(--accent-soft);border-color:var(--accent)}
+.pipe li b{font-size:14px;line-height:1.4}
+.pipe li span:last-child{font-size:13px;color:var(--ink2);line-height:1.45}
+.tool{justify-self:start;font-size:11px;font-weight:600;letter-spacing:.04em;border-radius:999px;padding:0 8px}
+.tool.py{background:var(--surface);color:var(--ink2);border:1px solid var(--line)}
+.tool.or{background:#f59e0b22;color:#b26b00;border:1px solid #f59e0b66}
+:root[data-theme="dark"] .tool.or{color:#f2b544}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tool.or{color:#f2b544}}
+.find{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.find div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:4px;align-content:start;min-width:0}
+.find .big{font-family:var(--f-mono);font-size:22px;color:var(--ink);line-height:1.3}
+.find p{font-size:14px;color:var(--ink2)}
+.find .so{font-size:14px;color:var(--ink);border-top:1px dashed var(--line);padding-top:6px;margin-top:2px}
+.find .so::before{content:"→ ตัดสินใจ: ";color:var(--accent);font-weight:600}
+.tag{display:inline-block;white-space:nowrap;font-size:12px;font-weight:600;border-radius:999px;padding:0 8px}
+.tag.keep{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+.tag.drop{background:var(--raise);color:var(--muted)}
+.vstat{display:flex;flex-wrap:wrap;gap:8px}
+.vstat span{font-size:13px;border-radius:8px;padding:4px 10px;background:var(--raise)}
+.vstat b{font-family:var(--f-mono)}
+.flow{display:grid;gap:10px}
+.lane{display:grid;grid-template-columns:128px minmax(0,1fr);gap:10px}
+.ll{display:grid;align-content:center;gap:2px;padding:4px 10px;border-left:3px solid var(--line)}
+.ll b{font-size:14px}.ll span{font-size:12px;color:var(--muted)}
+.lane.join .ll{border-color:var(--accent)}
+.lane ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.lane li{background:var(--raise);border-radius:10px;padding:10px 12px;display:grid;gap:3px;align-content:start;min-width:0;cursor:pointer;border:1px solid transparent}
+.lane li:hover{border-color:var(--line)}
+.lane li.hl{background:var(--accent-soft);border-color:var(--accent)}
+.lane li b{font-size:14px;line-height:1.4}
+.lane li>span:not(.tool){font-size:13px;color:var(--ink2);line-height:1.45}
+.lane li code{font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+.wf{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.wf .w{background:var(--raise);border-radius:8px;padding:6px 10px;font-size:14px;font-weight:600;display:grid;line-height:1.35}
+.wf small{font-weight:400;font-size:12px;color:var(--ink2)}
+.wf i{font-style:normal;color:var(--muted)}
+.wf .w.hl{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent)}
+.wf.alt .w{background:transparent;border:1px dashed var(--line);font-weight:500}
+.wf .lab{font-size:12px;color:var(--muted);margin-right:4px}
+.joinv{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px}
+.joinv>div{flex:1 1 160px;background:var(--raise);border-radius:10px;padding:10px 12px;display:grid;gap:3px;align-content:start}
+.joinv>div.hl{background:var(--accent-soft);border:1px solid var(--accent)}
+.joinv b{font-size:15px}.joinv span:last-child{font-size:13px;color:var(--ink2)}
+.joinv i{font-style:normal;align-self:center;color:var(--muted);font-size:18px}
+dl.kv{display:grid;grid-template-columns:96px minmax(0,1fr);gap:8px 12px;margin:0}
+dl.kv dt{font-size:13px;color:var(--muted);font-weight:600}
+dl.kv dd{margin:0;font-size:15px;color:var(--ink2)}
+h3.sub{font-size:15px;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:6px;margin-top:6px}
+p.m{font-size:13px;color:var(--muted)}
+.find.one{grid-template-columns:minmax(0,1fr)}
+.cols4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stackp{display:grid;gap:22px}
+details.more>summary{cursor:pointer;font-weight:600;font-size:15px;color:var(--accent);list-style:none}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::before{content:"▸ ";}
+details.more[open]>summary::before{content:"▾ ";}
+details.more[open]>summary{margin-bottom:12px}
+a.shotlink{display:block;cursor:zoom-in}
+img.shot{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+p.so2{font-size:15px;color:var(--ink);border-top:1px dashed var(--line);padding-top:8px}
+p.answer{font-size:22px;color:var(--accent);line-height:1.4}
+.pager{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:18px}
+.pager .btn{padding:9px 16px;font-size:14px}
+.pager .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.tip{position:fixed;pointer-events:none;z-index:40;background:var(--ink);color:var(--bg);font-size:13px;line-height:1.5;padding:7px 10px;border-radius:6px;max-width:250px;opacity:0;transition:opacity .12s}
+dl.gl{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+dl.gl div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+dl.gl div.flash{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 dt{font-weight:600}
-dt small{font-weight:400;color:var(--muted)}
-dd{margin:2px 0 0;color:var(--ink2);font-size:15px}
-dd a{font-size:14px}
-footer{padding-block:36px 56px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
-footer .wrap{display:grid;gap:8px}
-@media (max-width:720px){
-  .answer,.grid2{grid-template-columns:minmax(0,1fr)}
-  body{font-size:16px}
+dt small{color:var(--muted);font-weight:400}
+dd{margin:4px 0 0;font-size:15px;color:var(--ink2)}
+footer{font-size:13px;color:var(--muted);display:grid;gap:4px;padding-block:20px 40px;border-top:1px solid var(--line)}
+
+@media (max-width:980px){
+  nav.tabs{display:none}
+  #menuBtn{display:grid !important}
+  .brand .cur{display:block}
+  header.top .wrap{justify-content:space-between}
+  .drawer{display:block;position:absolute;left:0;right:0;top:56px;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:0 12px 24px rgb(0 0 0 / .12)}
+  .drawer[hidden]{display:none}
+  .drawer a{display:block;padding:12px max(16px,env(safe-area-inset-left,0px));color:var(--ink);text-decoration:none;border-top:1px solid var(--line);font-size:15px}
+  .drawer a[aria-current="page"]{color:var(--accent);font-weight:600}
+  .drawer a .n{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-right:8px}
 }
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:980px){.pipe{grid-template-columns:repeat(3,minmax(0,1fr))}.find{grid-template-columns:repeat(2,minmax(0,1fr))}.find.one{grid-template-columns:minmax(0,1fr)}.lane{grid-template-columns:minmax(0,1fr)}.ll{border-left:0;border-bottom:2px solid var(--line);padding:0 0 4px}.lane.join .ll{border-color:var(--accent)}.lane ol{grid-template-columns:repeat(3,minmax(0,1fr))}.cols4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){
+  table.stack thead{display:none}
+  table.stack,table.stack tbody{display:block;width:100%;min-width:0}
+  table.stack tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  table.stack td{border:0;padding:0;white-space:normal}
+  table.stack td:nth-child(1){font-weight:600}
+  table.stack td:nth-child(2),table.stack td:nth-child(4){grid-column:1 / -1;font-size:14px;color:var(--ink2)}
+  table.stack td:nth-child(3){grid-row:1;grid-column:2;text-align:right}
+  table.stack td:nth-child(4)::before{content:"→ ";color:var(--accent)}
+  table.stack td[colspan]{grid-column:1 / -1;padding-top:8px}
+  table.stack.long td:nth-child(n+2){grid-column:1 / -1;grid-row:auto;text-align:left;font-size:14px;color:var(--ink2)}
+  table.stack.long td[data-l]::before{content:attr(data-l) " · ";color:var(--muted);font-size:12px}
+  .split,.cols2,.cols3,dl.gl,.find{grid-template-columns:minmax(0,1fr)}
+  .pipe{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .lane ol{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  dl.kv{grid-template-columns:minmax(0,1fr);gap:2px}
+  dl.kv dd{margin-bottom:8px}
+  .wf i{display:none}
+  .funnel{grid-template-columns:minmax(0,1fr)}
+  .funnel div{grid-template-columns:56px minmax(0,1fr);align-items:center}
+  .panel{padding:16px}
+}
+@media (prefers-reduced-motion:reduce){.chart .dot{transition:none}}
 </style>
 
 </head>
 <body>
-<nav class="route" aria-label="ขั้นตอน">
-  <div class="wrap">
-    <a href="#answer"><span class="num">00</span>คำตอบ</a>
-    <a href="#problem"><span class="num">01</span>ปัญหา</a>
-    <a href="#data"><span class="num">02</span>ข้อมูล</a>
-    <a href="#clean"><span class="num">03</span>ทำความสะอาด</a>
-    <a href="#eda"><span class="num">04</span>EDA</a>
-    <a href="#gap"><span class="num">05</span>Gap</a>
-    <a href="#gate"><span class="num">06</span>Gate</a>
-    <a href="#orange"><span class="num">07</span>Orange</a>
-    <a href="#concept"><span class="num">08</span>Concept</a>
-    <a href="#limits"><span class="num">09</span>ข้อจำกัด</a>
-    <a href="#glossary"><span class="num">10</span>คำศัพท์</a>
+<header class="top gutter"><div class="wrap">
+  <a class="brand" href="#overview" data-go="overview"><span class="name">Thailand Stay Gap</span><span class="cur" id="curPage"></span></a>
+  <nav class="tabs" aria-label="Sections" id="tabs"></nav>
+  <div class="tools">
+    <button class="icon" id="menuBtn" type="button" aria-expanded="false" aria-controls="drawer" aria-label="เปิดเมนู"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ham" d="M4 7h16M4 12h16M4 17h16"/><path class="x" d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <button class="icon" id="theme" type="button" aria-label="สลับโหมดมืด/สว่าง"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="moon" d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/><g class="sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></svg></button>
   </div>
-</nav>
+  <nav class="drawer" id="drawer" hidden aria-label="Sections (mobile)"></nav>
+</div></header>
 
-<header class="hero" id="answer">
-  <div class="wrap">
-    <div class="eyebrow">DADS5002 · โครงการวิเคราะห์โอกาสธุรกิจที่พัก 77 จังหวัด</div>
-    <h1>หนองคายยังขาดที่พักแนวธรรมชาติริมโขง</h1>
-    <p class="lead">เราไล่ดูทุกจังหวัดว่าที่ไหนคนมาพักเพิ่มเร็วกว่าห้องพักที่สร้างเพิ่ม แล้วเลือกเฉพาะเมืองรอง จากนั้นเทียบกับเมืองดังที่ลูกค้าคล้ายกันว่าเขามีที่พักแบบไหนที่เรายังมีน้อย คำตอบที่ข้อมูลชี้คือ <b>หนองคาย</b> กับที่พักแนว <b>ธรรมชาติ/วิว</b> โดยมี <b>กาญจนบุรี</b> เป็นเมืองต้นแบบ</p>
-    <div class="answer">
-      <div class="fact"><b>6 / 6</b><span>หนองคายผ่านเกณฑ์คัดเลือกครบทั้ง 6 แบบทดสอบ</span></div>
-      <div class="fact"><b>+7 จุด%</b><span>ผู้เข้าพักโตเร็วกว่าห้องพัก ติดต่อกัน 2 ปี (66→67, 67→68)</span></div>
-      <div class="fact"><b>16% → 54%</b><span>สัดส่วนที่พักแนวธรรมชาติ/วิว หนองคายเทียบกาญจนบุรี</span></div>
-    </div>
-    <div class="path" aria-label="เส้นทางการคัดเลือก">
-      <span class="stop">77 จังหวัด</span><span class="arr">→</span>
-      <span class="stop">19 ผ่าน Gate</span><span class="arr">→</span>
-      <span class="stop">6 เมืองรองผ่านทุกแบบ</span><span class="arr">→</span>
-      <span class="stop">5 คู่กับเมืองต้นแบบ</span><span class="arr">→</span>
-      <span class="stop end">หนองคาย × ธรรมชาติ/วิว</span>
-    </div>
-    <p class="why">นี่คือ<b>สมมติฐานให้ศึกษาต่อ</b> ไม่ใช่คำยืนยันว่าลงทุนแล้วกำไร เพราะข้อมูลบอกได้ว่า "ตลาดมีที่พักแบบไหนอยู่" แต่ยังไม่รู้ว่า "แบบไหนขายดี" (ดูหัวข้อข้อจำกัด)</p>
+<main class="gutter"><div class="wrap">
+
+<!-- 1 OVERVIEW -->
+<section class="view" id="v-overview" data-view="overview">
+  <div class="vhead">
+    <div class="eyebrow">Overview · คำตอบก่อน</div>
+    <h1>หนองคายมีที่พักแนวธรรมชาติ น้อยกว่าเมืองที่ลูกค้าคล้ายกันมาก</h1>
+    <p class="q">เราหาจังหวัดที่คนมาพักเพิ่มเร็วกว่าห้องพักที่สร้างเพิ่ม เลือกเฉพาะเมืองรอง แล้วเทียบกับเมืองดังที่ลูกค้าคล้ายกันว่าเขามีที่พักแบบไหนที่เรายังมีน้อย</p>
   </div>
-</header>
-
-<section class="step" id="problem"><div class="wrap">
-  <div class="step-head"><div class="no">01 · ปัญหาและเป้าหมาย</div><h2>จะสร้างที่พักใหม่ ควรไปที่ไหน และทำแบบไหน</h2></div>
-  <div class="read" style="display:grid;gap:12px">
-    <p>ทั้งประเทศ ห้องพักโตเร็วกว่าคนมาพัก (ดูหัวข้อ EDA) ถ้าเลือกทำเลผิด ห้องใหม่จะไปแย่งลูกค้ากับที่พักเดิม แต่บางจังหวัดกลับเป็นตรงข้าม คือคนมาเพิ่มเร็วกว่าห้องที่เพิ่ม เราต้องการหาจังหวัดแบบนั้น โดยเน้น <b>เมืองรอง</b> 55 จังหวัดตามมติ ครม. เพราะเป็นเป้าหมายที่รัฐอยากกระจายนักท่องเที่ยวไป</p>
-    <div class="grid2">
-      <div class="card"><div class="tag">INPUT</div><p>สถิติที่พักรายจังหวัดของกระทรวงท่องเที่ยว ปี 2556–2568 และข้อความบรรยายสถานที่ท่องเที่ยว/ที่พักจาก API</p></div>
-      <div class="card"><div class="tag">OUTPUT</div><p>1 จังหวัดเป้าหมาย + 1 concept ที่พัก พร้อมเหตุผลและความมั่นใจของผล</p></div>
+  <div class="cols3">
+    <div class="kpi"><span class="l">ผ่านเกณฑ์คัดเลือก</span><span class="v">6 / 6</span><span class="d">ผ่านครบทั้ง 6 วิธีวัด (ดูหน้า Screening)</span></div>
+    <div class="kpi"><span class="l">คนมาพักโตเร็วกว่าห้องพัก</span><span class="v">+6.6 · +7.4</span><span class="d">จุด% ในปี 66→67 และ 67→68</span></div>
+    <div class="kpi"><span class="l">สัดส่วนที่พักแนวธรรมชาติ/วิว</span><span class="v">16% vs 54%</span><span class="d">หนองคาย เทียบเมืองต้นแบบ กาญจนบุรี</span></div>
+  </div>
+  <div class="panel">
+    <h3>เส้นทางจาก 77 จังหวัด สู่ 1 คำตอบ</h3>
+    <div class="funnel">
+      <div><b>77</b><span>จังหวัดทั้งประเทศ</span></div>
+      <div><b>19</b><span>ผ่าน 4 ด่านคัดเลือก</span></div>
+      <div><b>6</b><span>เป็นเมืองรอง และผ่านครบ 6 วิธีวัด</span></div>
+      <div><b>5</b><span>หาเมืองต้นแบบที่ลูกค้าคล้ายกันได้</span></div>
+      <div class="end"><b>1</b><span>หนองคาย × ที่พักแนวธรรมชาติ/วิว</span></div>
+    </div>
+    <p class="callout"><b>นี่คือสมมติฐานให้ศึกษาต่อ ไม่ใช่คำยืนยันว่าลงทุนแล้วกำไร</b> ข้อมูลบอกได้ว่าเมืองต้นแบบ "มีที่พักแบบไหนอยู่" แต่ยังไม่รู้ว่า "แบบไหนขายดี"</p>
+  </div>
+  <div class="panel">
+    <h3>ทำอะไรไปบ้าง ใช้เครื่องมืออะไร</h3>
+    <div class="flow">
+      <div class="lane"><div class="ll"><b>เส้นตัวเลข</b><span>MOTS · Structured</span></div><ol>
+        <li data-step="data"><span class="tool py">Python · 01</span><b>ดึงไฟล์ Excel</b><span>89 ไฟล์ · ปี 2556–2568</span><code>01_raw/mots_domestic</code></li>
+        <li data-step="clean"><span class="tool py">Python · 02–03</span><b>ทำความสะอาด</b><span>77 จังหวัด × 13 ปี</span><code>province_year.csv</code></li>
+        <li data-step="eda"><span class="tool py">Python · 04</span><b>สำรวจ (EDA)</b><span>กราฟ 6 ชุด → ตัดสินใจ</span><code>00_docs/figures</code></li>
+        <li data-step="screen"><span class="tool py">Python · 05</span><b>สร้างตัวแปร + คัดจังหวัด</b><span>Gap → Gate → 6/6</span><code>master_orange.csv</code></li>
+        <li data-step="model" class="hl"><span class="tool or">Orange</span><b>จัดกลุ่ม 77 จังหวัด</b><span>Hierarchical Ward · 4 กลุ่ม</span><code>orange_clusters.csv</code></li>
+      </ol></div>
+      <div class="lane"><div class="ll"><b>เส้นข้อความ</b><span>API · Unstructured</span></div><ol>
+        <li data-step="data"><span class="tool py">Python · 01b</span><b>ดึงจาก API</b><span>สถานที่ 5,877 · ที่พัก 6,990</span><code>01_raw/directory_api</code></li>
+        <li data-step="clean"><span class="tool py">Python · 06 ขั้น 1</span><b>ทำความสะอาดข้อความ</b><span>ตัดข้อความแม่แบบ</span></li>
+        <li data-step="join"><span class="tool py">Python · 06 ขั้น 2–3</span><b>ติดป้ายด้วยคำสำคัญ</b><span>จุดขาย 8 · แนวที่พัก 9</span><code>province_attraction_themes.csv</code></li>
+      </ol></div>
+      <div class="lane join"><div class="ll"><b>รวม 2 เส้น</b><span>key = ชื่อจังหวัด</span></div><ol>
+        <li data-step="join"><span class="tool py">Python · 06 ขั้น 4</span><b>จับคู่เมืองต้นแบบ</b><span>กลุ่มจาก Orange + จุดขายจาก API</span><code>analog_pairs.csv</code></li>
+        <li data-step="insight"><span class="tool py">Python · 06 ขั้น 5</span><b>เทียบแนวที่พัก</b><span>เมืองรอง vs เมืองต้นแบบ</span><code>concept_gap.csv</code></li>
+      </ol></div>
+    </div>
+    <p style="font-size:14px;color:var(--ink2)">กดแต่ละกล่องเพื่อไปอ่านรายละเอียด · ตัวเลขกับข้อความเดินแยกกันจนถึง notebook 06 จึงมารวมกัน · Modeling ทำใน <b>Orange</b> ตามโจทย์ ส่วนงานเตรียมข้อมูลทำใน Python (Google Colab)</p>
+  </div>
+  <div class="panel">
+    <h3>อ่านเว็บนี้ยังไง</h3>
+    <div class="cols3 text">
+      <p><b>1. ไปทีละหน้า</b> เมนูด้านบนเรียงตามลำดับงาน กด Next ท้ายหน้าเพื่อไปต่อ</p>
+      <p><b>2. ดูกล่อง "วิธีอ่าน"</b> ทุกกราฟมีคำอธิบายว่าจุด เส้น แท่ง หมายถึงอะไร</p>
+      <p><b>3. คำที่มีเส้นประใต้</b> กดเพื่อดูความหมายในหน้า Notes · วางเมาส์หรือแตะจุดในกราฟเพื่อดูตัวเลข</p>
     </div>
   </div>
-</div></section>
+  <div class="pager"><span></span><button class="btn primary" data-go="data" type="button">เริ่มอ่าน: Data →</button></div>
+</section>
 
-<section class="step" id="data"><div class="wrap">
-  <div class="step-head"><div class="no">02 · แหล่งข้อมูลและวิธีได้มา</div><h2>ข้อมูลตัวเลข 1 แหล่ง ข้อมูลข้อความ 1 แหล่ง ดึงเองด้วยโค้ดทั้งหมด</h2></div>
-  <div class="grid2">
-    <div class="card">
-      <div class="tag">ตัวเลข · <a class="term" href="#g-structured">Structured</a></div>
+<!-- 2 DATA -->
+<section class="view" id="v-data" data-view="data" hidden>
+  <div class="vhead">
+    <div class="eyebrow">Data · โจทย์และข้อมูลมาจากไหน</div>
+    <h2>จะสร้างที่พักใหม่ ควรไปที่ไหน ทำแบบไหน และใช้ข้อมูลอะไรตอบ</h2>
+  </div>
+  <div class="split">
+    <div class="panel text">
+      <h3>ปัญหาและแรงจูงใจ</h3>
+      <p>ปี 2568 ทั้งประเทศมีผู้เข้าพักกลับมาที่ <b>103.5</b> แต่ห้องพักไปถึง <b>107.8</b> (ปี 2562 ก่อนโควิด = 100) ห้องโตเร็วกว่าคนแล้ว ถ้าเลือกทำเลผิด ห้องใหม่จะไปแย่งลูกค้ากับที่พักเดิม</p>
+      <p>เราจึงหา<b>จังหวัดที่คนมาพักเพิ่มเร็วกว่าห้องที่เพิ่ม</b> โดยเลือกเฉพาะ<b>เมืองรอง 55 จังหวัด</b>ตามมติ ครม. ซึ่งเป็นเมืองที่รัฐอยากให้นักท่องเที่ยวกระจายไป แล้วดูว่าควรทำที่พัก<b>แนวไหน</b></p>
+      <div class="like">เหมือนจะเปิดร้านกาแฟ ต้องหาซอยที่คนเดินผ่านเพิ่มขึ้นเร็วกว่าร้านที่เปิดใหม่ แล้วดูว่าซอยคล้าย ๆ กันที่ขายดี เขามีร้านแบบไหน</div>
+    </div>
+    <div class="panel text">
+      <h3>Input · Output · Objective</h3>
+      <div class="tw"><table class="t"><tbody>
+        <tr><th>ใครใช้ผล</th><td>ผู้ประกอบการหรือนักลงทุนที่พักขนาดเล็ก–กลาง และหน่วยงานที่ส่งเสริมเมืองรอง</td></tr>
+        <tr><th>Input</th><td>สถิติที่พักรายจังหวัด 13 ปี (ตัวเลข) + คำบรรยายสถานที่ท่องเที่ยวและที่พัก (ข้อความ)</td></tr>
+        <tr><th>Output</th><td>1 จังหวัด + 1 แนวที่พัก พร้อมเหตุผลและระดับความมั่นใจ</td></tr>
+        <tr><th>Objective</th><td>ชี้จุดที่ตลาดยังมีที่ว่าง ให้คนทำที่พักนำไปศึกษาต่อ</td></tr>
+        <tr><th>ถือว่าสำเร็จเมื่อ</th><td>คำตอบผ่านเกณฑ์ทุกวิธีวัด · มีเมืองต้นแบบที่ลูกค้าคล้ายกัน · มีข้อความที่พักพอให้อ่านแนวได้ (≥ 10 แห่ง)</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+  <div class="cols2">
+    <div class="panel text src">
+      <span class="eyebrow">แหล่งที่ 1 · ตัวเลข · <span class="term" data-term="g-struct">Structured</span></span>
       <h3>สถิติที่พักรายจังหวัด (MOTS)</h3>
-      <p class="why">ไฟล์ Excel รายปี รายภาค จากเว็บกระทรวงการท่องเที่ยวและกีฬา ปี 2556–2568 · ใช้ Python ดาวน์โหลดทีละไฟล์</p>
-      <div class="kpi-row"><span>ปี <b class="num">13</b></span><span>จังหวัด <b class="num">77</b></span><span>ค่าในตารางที่ตรวจ <b class="num">48 ล้าน</b> cell</span></div>
-      <p class="why">มี: ห้องพัก, อัตราเข้าพัก, ผู้เข้าพักไทย/ต่างชาติ, วันพัก, คนต่อห้อง รายเดือน/ไตรมาส/ปี</p>
+      <dl class="kv">
+        <dt>เจ้าของ</dt><dd>กระทรวงการท่องเที่ยวและกีฬา หมวด "สถิติด้านการท่องเที่ยว" → "จำแนกตามภูมิภาค" (<a href="https://www.mots.go.th/news/category/411" target="_blank" rel="noopener">mots.go.th</a>)</dd>
+        <dt>ดึงยังไง</dt><dd>Python (requests + BeautifulSoup) ไล่ลิงก์หน้าเว็บทีละปี ดาวน์โหลด Excel เก็บแยกโฟลเดอร์ ปี/ภาค · notebook <code>01_scrape_mots</code></dd>
+        <dt>ได้อะไร</dt><dd><b class="num">89</b> ไฟล์ Excel ปี 2556–2568 (ก่อนปี 2556 ไม่มีแยกภาค) · 1 sheet = 1 พื้นที่ · ใน 1 sheet มีหลายตาราง เช่น ประเภทที่พัก, ตัวชี้วัดหลัก (KPI), สัญชาติรายเดือน</dd>
+        <dt>ใช้ตัวไหน</dt><dd>จำนวนห้อง · จำนวนที่พัก · อัตราเข้าพัก · ผู้เข้าพักไทย/ต่างชาติ · วันพักเฉลี่ย · คนต่อห้อง · ค่าที่พักต่อคน</dd>
+      </dl>
     </div>
-    <div class="card">
-      <div class="tag">ข้อความ · <a class="term" href="#g-structured">Unstructured</a></div>
-      <h3>Thailand Tourism Directory (REST API)</h3>
-      <p class="why">ฐานข้อมูลสถานที่ของรัฐ เรียกผ่าน API แบบแบ่งหน้า ทีละจังหวัด · ส่วนที่ใช้คือ <b>คำบรรยายภาษาไทยแบบอิสระ</b></p>
-      <div class="kpi-row"><span>สถานที่ท่องเที่ยว <b class="num">5,877</b></span><span>ที่พัก <b class="num">6,990</b></span><span>สปา <b class="num">405</b></span></div>
-      <p class="why">ใช้ตอบว่าแต่ละจังหวัด "ขายอะไร" และที่พัก "เป็นแนวไหน"</p>
+    <div class="panel text src">
+      <span class="eyebrow">แหล่งที่ 2 · ข้อความ · <span class="term" data-term="g-struct">Unstructured</span></span>
+      <h3>Thailand Tourism Directory (API)</h3>
+      <dl class="kv">
+        <dt>เจ้าของ</dt><dd>ฐานข้อมูลสถานที่ท่องเที่ยวของรัฐ เรียกผ่าน <span class="term" data-term="g-api">REST API</span> (<code>api.thailandtourismdirectory.go.th</code>)</dd>
+        <dt>ดึงยังไง</dt><dd>Python ส่งคำขอทีละประเภท × ทีละจังหวัด หน้าละ 500 รายการ · กุญแจ API อ่านจาก Colab Secrets ไม่พิมพ์ไว้ในโค้ด · notebook <code>01b_directory_api</code></dd>
+        <dt>ได้อะไร</dt><dd>ลองดึงประเภท 1–8 ก่อน แล้วเก็บ <b>สถานที่ท่องเที่ยว <span class="num">5,877</span></b> · <b>ที่พัก <span class="num">6,990</span></b> · สปา 405 (ยังไม่ได้ใช้) ครบ 77 จังหวัด</dd>
+        <dt>ใช้ตัวไหน</dt><dd><b>ชื่อ + คำบรรยายภาษาไทย + จังหวัด</b> เพื่อดูว่าจังหวัด "ขายอะไร" และที่พัก "เป็นแนวไหน"</dd>
+      </dl>
     </div>
   </div>
-  <p class="why read">ไม่ใช้ข้อมูลจาก Kaggle/UCI · รายชื่อเมืองรองอ้างอิง <a href="https://www.thansettakij.com/business/tourism/597922" target="_blank" rel="noopener">ฐานเศรษฐกิจ 6 มิ.ย. 2567</a> ซึ่งตรงกับ<a href="https://thaipublica.org/2025/10/cabinet-approves-5-tourism-packages-secondary-cities-tax-deduction-30000-baht/" target="_blank" rel="noopener">รอบ ครม. ต.ค. 2568</a></p>
-</div></section>
+  <details class="panel more">
+    <summary>ไฟล์ไหนมาจากไหน ไปไหนต่อ (กดเพื่อดู)</summary>
+    <div class="tw"><table class="t stack">
+      <thead><tr><th>ขั้น</th><th>ทำอะไร</th><th>เครื่องมือ</th><th>ไฟล์ที่ได้</th></tr></thead>
+      <tbody>
+        <tr><td>01 · 01b</td><td>ดาวน์โหลด Excel จาก MOTS · เรียก API</td><td>Python</td><td><code>01_raw/mots_domestic/</code> · <code>01_raw/directory_api/</code></td></tr>
+        <tr><td>02</td><td>อ่านทุก sheet ทุกตาราง รวมเป็นตารางเดียว ตรวจซ้ำ 15 กฎ จดทุกการแก้</td><td>Python</td><td><code>02_interim/</code> · <code>04_qa/cleaning_log</code> · <code>validation_report</code></td></tr>
+        <tr><td>03</td><td>เก็บเฉพาะ 77 จังหวัด จัดเป็นตารางปี / ไตรมาส / เดือน</td><td>Python</td><td><code>province_year</code> · <code>_quarter</code> · <code>_month</code></td></tr>
+        <tr><td>04</td><td>EDA: กราฟ 6 ชุด + ข้อสังเกต</td><td>Python</td><td><code>00_docs/figures/</code></td></tr>
+        <tr><td>05</td><td>สร้างตัวแปร · รวมกับรายชื่อเมืองรอง · Gap → ด่าน → 6 วิธีวัด</td><td>Python</td><td><code>province_features</code> · <code>master_orange</code></td></tr>
+        <tr><td>Orange</td><td>จัดกลุ่ม 77 จังหวัด (Modeling)</td><td>Orange</td><td><code>orange_clusters.csv</code></td></tr>
+        <tr><td>06</td><td>คลีนข้อความ API · ติดป้าย · รวมกับฝั่ง MOTS · จับคู่ · เทียบแนวที่พัก</td><td>Python</td><td><code>analog_pairs</code> · <code>concept_gap</code> · <code>text_tagging_QA.xlsx</code></td></tr>
+      </tbody></table></div>
+    <p style="font-size:14px;color:var(--ink2)">ไฟล์ดิบใน <code>01_raw</code> ไม่ถูกแก้เลย ทุกไฟล์หลังจากนั้นสร้างจากโค้ดของทีม</p>
+  </details>
+  <div class="pager"><button class="btn" data-go="overview" type="button">← Overview</button><button class="btn primary" data-go="clean" type="button">Cleaning →</button></div>
+</section>
 
-<section class="step" id="clean"><div class="wrap">
-  <div class="step-head"><div class="no">03 · ทำความสะอาดข้อมูล</div><h2>ไฟล์ราชการแต่ละปีหน้าตาไม่เหมือนกัน และมีตัวเลขผิดปนอยู่</h2>
-    <p class="why read">เราอ่านทุก sheet เก็บที่มาของทุกค่า (ไฟล์/sheet/cell) และตรวจซ้ำ ค่าที่พิสูจน์ได้ว่าผิดจะถูกเปลี่ยนเป็น "ค่าว่าง" พร้อมจดค่าเดิมไว้ ไม่เดาตัวเลขเอง</p></div>
-  <div class="analogy">ตรวจข้อสอบก่อนให้คะแนน ถ้ากระดาษคำตอบเลื่อนบรรทัด ก็ไม่เอาคะแนนข้อนั้นมานับ แต่ไม่เขียนคำตอบให้เขาเอง</div>
-  <div class="tbl-wrap"><table>
-    <thead><tr><th>ปัญหาที่เจอ</th><th>ก่อน</th><th>หลัง</th></tr></thead>
-    <tbody>
-      <tr><td>อัตราเข้าพักภาคตะวันออก ปี 2556 เป็นตัวเลขหลักแสน</td><td class="bef num">จันทบุรี 678,661.17%</td><td class="aft num">44.27% (จากตาราง KPI ที่ถูกต้อง)</td></tr>
-      <tr><td>เลย ปี 2559 แถวไตรมาส 1 เลื่อน ยอดทั้งปีเกินจริง</td><td class="bef num">1,261,369 คน</td><td class="aft num">1,112,519 คน (= Q1+Q2+Q3+Q4)</td></tr>
-      <tr><td>เพชรบุรี/ประจวบฯ ปี 2556–59 ไม่มีตัวเลขระดับจังหวัด มีแค่ชะอำ/หัวหิน</td><td class="bef">ใช้ตัวเลขอำเภอแทนจังหวัด</td><td class="aft">เว้นว่าง + ระบุเหตุผล</td></tr>
-      <tr><td>ชื่อพื้นที่สะกดหลายแบบ (ศรีษะเกษ, Nakornratchasrima …)</td><td class="bef">นับเป็นคนละจังหวัด</td><td class="aft">รวมเป็นชื่อมาตรฐาน 77 จังหวัด</td></tr>
-    </tbody></table></div>
-  <div class="kpi-row"><span>ตรวจครอบคลุม <b class="num">100%</b> ของตาราง</span><span>บันทึกการแก้ <b class="num">6,245</b> รายการ</span><span>ค่าที่ตั้งเป็นค่าว่าง <b class="num">186</b> ค่า</span><span>ตารางพร้อมใช้ <b class="num">77 × 13 ปี</b></span></div>
-  <p class="why read">ส่วนเตรียมข้อมูลเข้าโมเดล: แปลงขนาดตลาดและ % ต่างชาติเป็น <a class="term" href="#g-log">log</a> เพราะข้อมูลเบ้มาก · <a class="term" href="#g-z">Standardize</a> ทุกตัวแปรให้อยู่สเกลเดียวกันใน Orange · ข้อความแปลงเป็นป้าย 0/1 (เป็น <a class="term" href="#g-encode">Encoding</a> แบบหนึ่ง)</p>
-</div></section>
-
-<section class="step" id="eda"><div class="wrap">
-  <div class="step-head"><div class="no">04 · EDA สำรวจข้อมูล</div><h2>ทั้งประเทศ ห้องพักโตแซงคนมาพักไปแล้ว</h2>
-  <p class="why read">EDA คือการ "ส่องข้อมูลก่อนตัดสินใจ" สิ่งที่เห็นตรงนี้กำหนดวิธีทำในขั้นต่อไป</p></div>
-  <figure>
-    <div class="ft">หลังโควิด ผู้เข้าพักกลับมา 103.5 แต่ห้องพักไปถึง 107.8 (ปี 2562 = 100)</div>
-    <div class="legend"><span><i class="line" style="background:var(--target)"></i>ผู้เข้าพัก</span><span><i class="line" style="background:var(--analog)"></i>ห้องพัก</span></div>
-    <div class="chart" id="ch-nat"></div>
-    <figcaption>ดัชนีรวม 75 จังหวัดที่มีข้อมูลครบทุกปี · ที่มา: MOTS</figcaption>
-  </figure>
-  <div class="card read"><h3>เห็นอะไร → ตัดสินใจอะไร</h3>
-      <ul class="clean">
-        <li>ห้องโตเร็วกว่าคนทั้งประเทศ → ต้องหา<b>เฉพาะจุด</b>ที่กลับกัน จึงเกิดตัวชี้วัด <b>Gap</b></li>
-        <li>กรุงเทพฯ ใหญ่กว่าจังหวัดกลาง ๆ ราว 35 เท่า → ใช้ <a class="term" href="#g-log">log</a> และตั้งเกณฑ์แบบตัดกลุ่มล่าง (ไม่ใช้ค่าเฉลี่ย)</li>
-        <li>บางจังหวัดคนมาแค่ฤดูเดียว → ใช้ "ความผันผวนตามฤดู" เป็นลักษณะตลาดตัวหนึ่ง</li>
-        <li>ปี 2563–65 คือช่วงโควิด → ดูการเติบโตเฉพาะ 2566→2568 และเช็กว่าฟื้นกลับมาแล้ว</li>
-      </ul></div>
-</div></section>
-
-<section class="step" id="gap"><div class="wrap">
-  <div class="step-head"><div class="no">05 · Gap ดีมานด์เทียบซัพพลาย</div><h2>Gap = คนมาพักโต − ห้องพักโต</h2>
-  <p class="why read">ถ้า Gap เป็นบวก แปลว่าห้องสร้างเพิ่มไม่ทันคน ตลาดยังมีที่ว่างให้ผู้เล่นใหม่ ถ้าติดลบ แปลว่าห้องล้น ใครเข้าไปก็ต้องแย่งลูกค้ากัน</p></div>
-  <div class="analogy">ร้านกาแฟในซอยที่คนเดินผ่านเพิ่มขึ้นทุกปี แต่ร้านเปิดเพิ่มช้ากว่า ซอยแบบนี้น่าเปิดร้านใหม่มากกว่าซอยที่ร้านเต็มไปหมดแล้ว</div>
-  <figure>
-    <div class="ft">จังหวัดที่อยู่เหนือเส้นทแยง = คนมาเพิ่มเร็วกว่าห้อง</div>
-    <div class="fs">การเติบโตสะสม 2566→2568 · วางเมาส์บนจุดเพื่อดูชื่อและตัวเลข</div>
-    <div class="legend"><span><i style="background:var(--target)"></i>เมืองรองที่ผ่านครบ 6/6</span><span><i style="background:var(--dim-strong)"></i>จังหวัดอื่น</span></div>
-    <div class="chart" id="ch-gap"></div>
-    <figcaption>แกนนอน: ห้องพักโต (%) · แกนตั้ง: ผู้เข้าพักโต (%) · ที่มา: MOTS (ผ่านการทำความสะอาดแล้ว)</figcaption>
-  </figure>
-</div></section>
-
-<section class="step" id="gate"><div class="wrap">
-  <div class="step-head"><div class="no">06 · Gate ด่านคัดเลือก</div><h2>4 ด่าน คัด 77 จังหวัดเหลือ 19</h2>
-  <p class="why read">เราประกาศเกณฑ์ไว้ก่อนดูผล กันการเลือกเกณฑ์ให้ได้คำตอบที่อยากได้</p></div>
-  <div class="analogy">คัดนักวิ่งเข้ารอบ ไม่ได้ตั้งเวลาตายตัว แต่ตัดคนที่ช้าที่สุด 25% ออก แล้วดูว่าใครวิ่งดีต่อเนื่องหลายรอบ ไม่ใช่ฟลุคครั้งเดียว</div>
-  <figure>
-    <div class="ft">แต่ละด่านเหลือกี่จังหวัด (แบบหลัก)</div>
-    <div class="chart" id="ch-funnel"></div>
-  </figure>
-  <div class="tbl-wrap"><table>
-    <thead><tr><th>ด่าน</th><th>เกณฑ์</th><th>ทำไม</th></tr></thead>
-    <tbody>
-      <tr><td>G1 ต่อเนื่อง</td><td>Gap เป็นบวก และคนมาพักโตจริง ทั้ง 66→67 และ 67→68</td><td>ต้องขาดต่อเนื่อง ไม่ใช่ปีเดียว</td></tr>
-      <tr><td>G2 ห้องไม่ว่าง</td><td>อัตราเข้าพัก ≥ <span class="num">53.8%</span> = ตัดกลุ่มล่างสุด 25% ออก (<a class="term" href="#g-quartile">ควอไทล์ที่ 1</a>)</td><td>ห้องที่มีอยู่ต้องขายได้ดีอยู่แล้ว</td></tr>
-      <tr><td>G3 ตลาดไม่เล็ก</td><td>ผู้เข้าพัก ≥ <span class="num">478,000</span> คน/ปี (ตัดกลุ่มล่างสุด 25%)</td><td>ตลาดเล็กมาก เปอร์เซ็นต์แกว่งง่าย</td></tr>
-      <tr><td>G4 ฟื้นแล้ว</td><td>ผู้เข้าพักปี 2568 ≥ 90% ของปี 2562</td><td>ตัดจังหวัดที่ยังไม่หายจากโควิด</td></tr>
-    </tbody></table></div>
-  <p class="read">คำว่า "Q1" ในงานนี้หมายถึง <b>ควอไทล์ที่ 1</b> (จุดที่แบ่ง 25% ล่างสุด) ไม่ใช่ไตรมาส 1</p>
-  <div class="card read">
-    <h3>ทดสอบซ้ำ 6 แบบ ผลต้องไม่ขึ้นกับว่าเลือกเกณฑ์แบบไหน</h3>
-    <p class="why">นับคนมาพัก 2 แบบ (จำนวนคน / จำนวนห้อง-คืนที่ใช้จริง) × เกณฑ์ 3 แบบ (ตัด 25% / ตัด 33% / ไม่ใช้เกณฑ์ขนาด) แล้วนับว่าแต่ละจังหวัดผ่านกี่แบบ เรียกว่า <a class="term" href="#g-stability">stability</a></p>
-    <p>เมืองรองที่ผ่านครบ <b>6 จาก 6</b>: <span id="six"></span></p>
+<!-- 3 CLEANING -->
+<section class="view" id="v-clean" data-view="clean" hidden>
+  <div class="vhead">
+    <div class="eyebrow">Cleaning · ทำความสะอาดข้อมูล</div>
+    <h2>ไฟล์ราชการมีตัวเลขผิดปน เราแก้เท่าที่พิสูจน์ได้ และจดไว้ทุกจุด</h2>
+    <p class="q">ทำ 2 ฝั่งแยกกัน: ตัวเลข MOTS (notebook 02–03) และข้อความ API (notebook 06 ขั้นที่ 1)</p>
   </div>
-</div></section>
-
-<section class="step" id="orange"><div class="wrap">
-  <div class="step-head"><div class="no">07 · Modeling ใน Orange</div><h2>จัดกลุ่มจังหวัดตามลักษณะลูกค้า เพื่อหาเมืองต้นแบบที่ "ตลาดเดียวกัน"</h2>
-  <p class="why read">ใช้ <a class="term" href="#g-cluster">Clustering</a> ใน Orange ด้วย 5 ลักษณะตลาด: ขนาดตลาด, % ต่างชาติ, วันพักเฉลี่ย, ความผันผวนตามฤดู, คนต่อห้อง · <b>ไม่ใส่ Gap</b> เพราะใช้คัดจังหวัดไปแล้ว ถ้าใส่ซ้ำก็เหมือนให้ข้อสอบตรวจตัวเอง</p></div>
-  <div class="analogy">จัดนักเรียนเป็นกลุ่มตามนิสัยการเรียน โดยไม่มีเฉลยว่ากลุ่มไหนถูก เครื่องแค่จับคนที่คล้ายกันไว้ด้วยกัน แล้วเราดูว่าแต่ละกลุ่มมีอะไรร่วมกัน</div>
-  <div class="grid2">
-    <div class="card"><div class="tag">WORKFLOW ใน ORANGE</div>
-      <p>File (ตั้ง 8 คอลัมน์เป็น meta) → Preprocess: <a class="term" href="#g-z">Standardize</a> → Distances (Euclidean) → <a class="term" href="#g-hier">Hierarchical Clustering</a> (Ward) → Box Plot / MDS / Save Data</p>
-      <p class="why">สายคู่ขนาน: k-Means → <a class="term" href="#g-sil">Silhouette</a> ใช้เลือกจำนวนกลุ่ม</p></div>
-    <figure style="padding-bottom:6px">
-      <div class="ft">ทำไมเลือก 4 กลุ่ม</div>
-      <div class="fs">2 กลุ่มคะแนนสูงสุด แต่แยกแค่ "ฮับต่างชาติ" ออกจากที่เหลือ ไม่ช่วยตอบโจทย์ · 4 กลุ่มอธิบายความหมายได้</div>
-      <div class="chart" id="ch-sil"></div>
-    </figure>
+  <h3 class="sub">ฝั่งที่ 1 · ตัวเลข MOTS</h3>
+  <div class="split">
+    <div class="panel text">
+      <h3>หลักที่ใช้</h3>
+      <p>อ่านทุก sheet เก็บที่มาของทุกค่า (ไฟล์ / sheet / ช่อง) ค่าที่พิสูจน์ได้ว่าผิดเปลี่ยนเป็น "ค่าว่าง" พร้อมจดค่าเดิมไว้ <b>ไม่เดาตัวเลขเอง</b> · บันทึกการแก้รวม <b class="num">6,245</b> รายการ</p>
+      <div class="like">ตรวจข้อสอบ ถ้ากระดาษคำตอบเลื่อนบรรทัด ก็ไม่นับข้อนั้น แต่ไม่เขียนคำตอบให้เขาเอง</div>
+      <h3>ตรวจซ้ำอัตโนมัติ 15 กฎ</h3>
+      <p>เช่น ผลรวม 77 จังหวัด = ยอดประเทศ · ไตรมาส 1–4 รวม = ทั้งปี · คนไทย + ต่างชาติ = ทั้งหมด</p>
+      <div class="vstat"><span>ผ่าน <b>469</b></span><span>แจ้งให้ทราบ <b>59</b></span><span>เตือน <b>68</b></span><span>ไม่ผ่าน <b>40</b></span><span>ข้าม <b>4</b></span></div>
+      <p style="font-size:14px">"ไม่ผ่าน" คือจุดที่ไฟล์ราชการขัดกันเอง เช่น ผลรวมรายเดือนไม่เท่าไตรมาส เราบันทึกไว้ ไม่ได้แก้ตัวเลขให้เข้ากัน</p>
+    </div>
+    <div class="panel"><figure>
+      <div class="ft">เทียบก่อน / หลังทำความสะอาด</div>
+      <div class="tw"><table class="t"><thead><tr><th>ปัญหาที่เจอ</th><th>ก่อน</th><th>หลัง</th></tr></thead><tbody>
+        <tr><td>จันทบุรี 2556 อัตราเข้าพักทั้งปีเป็นเลขหลักแสน</td><td class="bef num">678,661.17</td><td class="aft num">44.27%</td></tr>
+        <tr><td>เลย 2559 แถวไตรมาส 1 เลื่อน ยอดทั้งปีเกินจริง</td><td class="bef num">1,261,369 คน</td><td class="aft num">1,112,519 คน</td></tr>
+        <tr><td>ปราจีนบุรี 2565 Q1 อัตราเข้าพักขัดกับอีก 2 ตาราง</td><td class="bef num">67.88%</td><td class="aft num">36.07%</td></tr>
+        <tr><td>ช่องที่เป็น "-" หรือ "#DIV/0!"</td><td class="bef">3,733 ช่อง</td><td class="aft">ค่าว่าง (ไม่ใช่ 0)</td></tr>
+        <tr><td>ชื่อพื้นที่ เช่น "ศรีษะเกษ", "แม่ฮองสอน 1."</td><td class="bef">263 แบบ</td><td class="aft">ชื่อมาตรฐาน 77 จังหวัด</td></tr>
+      </tbody></table></div>
+      <figcaption>หลังคลีน: ตาราง 77 จังหวัด × 13 ปี = 1,001 แถว · รายไตรมาส 4,004 แถว · รายเดือน 12,012 แถว</figcaption>
+    </figure></div>
   </div>
-  <figure>
-    <div class="ft">4 กลุ่มที่ได้ แยกกันชัดที่สุดด้วย % ต่างชาติ</div>
-    <div class="chips" role="group" aria-label="เลือกกลุ่ม" id="cl-chips"></div>
-    <div class="chart" id="ch-cl"></div>
-    <div class="members" id="cl-members"></div>
-    <figcaption>แกนนอน: % ผู้เข้าพักต่างชาติ (สเกล log) · แกนตั้ง: วันพักเฉลี่ย · จุดที่ไฮไลต์ = จังหวัดในกลุ่มที่เลือก · Box Plot ใน Orange: ANOVA p &lt; 0.001</figcaption>
-  </figure>
-  <div class="tbl-wrap"><table>
-    <thead><tr><th>เมืองรอง</th><th>กลุ่ม</th><th>เมืองต้นแบบในกลุ่มเดียวกัน</th></tr></thead>
-    <tbody id="pair-rows"></tbody></table></div>
-  <p class="why read">กฎเลือกเมืองต้นแบบ: (1) อยู่กลุ่มเดียวกันใน Orange (2) เป็นเมืองหลักที่ผู้เข้าพักติด 20 อันดับแรก (3) ขายจุดขายหลักเดียวกัน · <b>ชัยภูมิหลุด</b> เพราะกลุ่มของชัยภูมิไม่มีเมืองหลักที่เข้าเกณฑ์</p>
-</div></section>
-
-<section class="step" id="concept"><div class="wrap">
-  <div class="step-head"><div class="no">08 · จากข้อความสู่ concept</div><h2>เมืองต้นแบบมีที่พักแบบไหนที่เมืองรองยังมีน้อย</h2>
-  <p class="why read">อ่านคำบรรยายของที่พักทุกแห่ง แล้วติดป้าย concept ด้วยคำสำคัญ เช่น เจอ "ริมโขง" "ธรรมชาติ" "ดอย" → ป้ายธรรมชาติ/วิว จากนั้นเทียบ % ระหว่างคู่เมือง</p></div>
-  <div class="grid2">
-    <div class="card"><div class="tag">ป้ายถูกต้องแค่ไหน · <a class="term" href="#g-precision">Precision</a></div>
-      <div class="qa"><div class="col"><span class="num">84%</span><span class="why">ก่อนแก้คำสำคัญ (67 ป้าย)</span></div><span class="arrow">→</span><div class="col"><span class="num" style="color:var(--good)">93%</span><span class="why">หลังแก้ ตัวอย่างชุดใหม่ (59 ป้าย)</span></div></div>
-      <p class="why">สุ่มตัวอย่างให้คนอ่านตรวจทีละป้าย รอบ 2 ใช้ตัวอย่างใหม่ ไม่ให้วัดบนชุดที่ใช้แก้คำ</p></div>
-    <div class="card"><div class="tag">คำที่หลอกระบบ (เจอแล้วแก้)</div>
-      <ul class="clean">
-        <li>"วัด" ซ่อนใน "จัง<b>หวัด</b>"</li>
-        <li>"ทะเล" ใน "สูงจากระดับน้ำ<b>ทะเล</b>"</li>
-        <li>"ไร่" ที่เป็นหน่วยพื้นที่ "35 <b>ไร่</b>"</li>
-        <li>"ป่า" ใน "เ<b>ป่า</b>ลม"</li>
-      </ul></div>
+  <details class="panel more">
+    <summary>ดูบันทึกปัญหาทั้งหมดที่เจอ และเราทำอะไรกับมัน</summary>
+    <div class="tw"><table class="t stack">
+      <thead><tr><th>ปัญหา</th><th>ตัวอย่างที่เจอ</th><th>จำนวน</th><th>เราทำอะไร</th></tr></thead>
+      <tbody>
+        <tr><td colspan="4"><b>หน้าตาไฟล์ไม่เหมือนกัน</b></td></tr>
+        <tr><td>คอลัมน์อยู่คนละตำแหน่ง</td><td>ไฟล์ปี 2556, 2557, 2560</td><td class="num">312 sheet</td><td>ย้ายคอลัมน์ไปตำแหน่งมาตรฐานก่อนอ่าน ไม่แก้ค่า</td></tr>
+        <tr><td>ไฟล์ซ้ำ</td><td>ภาคเหนือ 2566 มี 2 ไฟล์ ตัวเลขต่างกัน 19,419 ช่อง</td><td class="num">1 ไฟล์</td><td>ใช้ไฟล์หลัก ไฟล์ซ้ำใช้แค่เทียบ</td></tr>
+        <tr><td>sheet ที่ไม่ใช่พื้นที่</td><td>"สรุป61", "Sheet1", "Sheet2"</td><td class="num">60 sheet</td><td>ข้าม</td></tr>
+        <tr><td>ตัวเลขนอกตาราง / แถวที่ไม่ใช่ข้อมูล</td><td>เลขทดของผู้จัดทำ, หัวข้อย่อย, หมายเหตุ</td><td class="num">1,540 ช่อง</td><td>ไม่ใช้ แต่จดไว้ทุกช่อง</td></tr>
+        <tr><td colspan="4"><b>ชื่อและค่าที่ไม่ใช่ตัวเลข</b></td></tr>
+        <tr><td>ชื่อพื้นที่ไม่มาตรฐาน</td><td>"ศรีษะเกษ", "แม่ฮองสอน 1.", "กรุงเทพมหานคร2567"</td><td class="num">263 จุด</td><td>แปลงเป็นชื่อมาตรฐาน</td></tr>
+        <tr><td>พื้นที่เดียวกันซ้ำ</td><td>กทม. ปี 2556 มี 2 ชุด ตัวเลขต่างกัน 31 ช่อง</td><td class="num">108 จุด</td><td>เก็บชุดเดียว จดว่าต่างกันกี่ช่อง</td></tr>
+        <tr><td>ช่องที่ไม่ใช่ตัวเลข</td><td>"-" 3,615 · "#DIV/0!" 118 · อื่น ๆ 3</td><td class="num">3,736 ช่อง</td><td>ค่าว่าง ไม่ใช่ 0</td></tr>
+        <tr><td>ชื่อแถว/คอลัมน์หาย</td><td>หัวตารางว่างในไฟล์ดิบ</td><td class="num">28 แถว</td><td>อนุมานจากตำแหน่ง แล้วตรวจกับผลรวม</td></tr>
+        <tr><td colspan="4"><b>ตัวเลขเลื่อน / ลอกผิด</b></td></tr>
+        <tr><td>ตัวเลขเลื่อน 1 แถว</td><td>ลำพูน 2564 · บุรีรัมย์ 2566 · ยโสธร 2563</td><td class="num">3 ตาราง</td><td>อ่านจากแถวที่ถูก (ตรวจกับตาราง KPI แล้วตรง)</td></tr>
+        <tr><td>คอลัมน์ทั้งปีลอกค่าไตรมาส 4</td><td>ภาคอีสาน 2562</td><td class="num">1 ตาราง</td><td>ค่าว่าง</td></tr>
+        <tr><td>แถวหลักว่าง แต่แถวสรุปมีค่า</td><td>สัญชาติ Q3 2564 (นครนายก, ภาคอีสาน)</td><td class="num">2 ตาราง</td><td>เติมจากแถวสรุป</td></tr>
+        <tr><td colspan="4"><b>ตัวเลขผิดที่พิสูจน์ได้ → ค่าว่าง (186 ช่อง)</b></td></tr>
+        <tr><td>อัตราเข้าพักไม่ใช่ %</td><td>ภาคตะวันออก 2556 เช่น จันทบุรี 678,661.17</td><td class="num">72</td><td>ค่าว่าง แล้วใช้ค่าจากตาราง KPI</td></tr>
+        <tr><td>ตัวเลขถูกเรียงใหม่ ไม่ตรงชื่อ</td><td>สัญชาติทั้งประเทศ 2558</td><td class="num">41</td><td>ค่าว่าง</td></tr>
+        <tr><td>ไตรมาส 1 เลื่อน ทำยอดทั้งปีผิด</td><td>เลย 2559</td><td class="num">36</td><td>ค่าว่าง (ผู้เข้าพักใช้ Q1–Q4 รวมแทน)</td></tr>
+        <tr><td>รายเดือนลอกมาจาก Q1</td><td>ภาคตะวันตก 2556</td><td class="num">18</td><td>ค่าว่าง</td></tr>
+        <tr><td>จำนวนห้องมีทศนิยม</td><td>ม.ค. 2557 เชียงใหม่ 32,961.54</td><td class="num">9</td><td>ค่าว่าง</td></tr>
+        <tr><td>อื่น ๆ</td><td>% เปลี่ยนแปลงวางข้ามพื้นที่ · ค่าขัดกับรายเดือน</td><td class="num">10</td><td>ค่าว่าง</td></tr>
+        <tr><td colspan="4"><b>ขัดกันเอง / ข้อมูลไม่มี / ตัดออก</b></td></tr>
+        <tr><td>ตัวเลขขัดกันระหว่างตาราง</td><td>ปราจีนบุรี 2565 Q1 · นครพนม 2565 Q2</td><td class="num">2 ค่า</td><td>ใช้ค่าที่อีก 2 ตารางยืนยันตรงกัน</td></tr>
+        <tr><td>ไม่มีตัวเลขระดับจังหวัด</td><td>เพชรบุรี/ประจวบฯ 2556–59 มีแค่ชะอำ/หัวหิน</td><td class="num">8 จังหวัด-ปี</td><td>เว้นว่าง ไม่ใช้ตัวเลขอำเภอแทน</td></tr>
+        <tr><td>ไม่ใช้ตอบโจทย์ / คำนวณซ้ำได้</td><td>ตารางพาหนะ · ค่าปีก่อน · % เปลี่ยนแปลง</td><td class="num">—</td><td>ไม่เก็บ (ค่าปีก่อนใช้ตรวจความถูกต้อง)</td></tr>
+      </tbody></table></div>
+  </details>
+  <h3 class="sub">ฝั่งที่ 2 · ข้อความ API</h3>
+  <div class="split">
+    <div class="panel text">
+      <p>ข้อความ API ใครก็พิมพ์ลงระบบ จึงมีทั้งอักขระแปลก ๆ และ<b>ข้อความสำเร็จรูป</b>ที่ไม่ได้บอกอะไรเกี่ยวกับที่พักนั้นเลย</p>
+      <div class="like">ถ้า 2,000 รีวิวเขียนว่า "อร่อยมาก" เหมือนกันหมด ก็ไม่ได้บอกว่าร้านไหนขายอะไร</div>
+      <div class="vstat"><span>คำบรรยายสถานที่ท่องเที่ยวที่ใช้ได้ <b>5,671 / 5,877</b> (96%)</span><span>คำบรรยายที่พักที่ใช้ได้ <b>3,305 / 6,990</b> (47%)</span></div>
+    </div>
+    <div class="panel">
+      <div class="tw"><table class="t stack">
+        <thead><tr><th>ปัญหา</th><th>ตัวอย่าง</th><th>สถานที่ · ที่พัก</th><th>เราทำอะไร</th></tr></thead>
+        <tbody>
+          <tr><td>อักขระควบคุมปน</td><td><code>_x000D_</code></td><td class="num">1,474 · 1,413</td><td>ลบออก · ช่องว่างซ้ำเหลือช่องเดียว</td></tr>
+          <tr><td>ข้อความแม่แบบซ้ำ ≥ 5 แห่ง</td><td>"ที่พักที่สะดวกสบาย ยินดีต้อนรับทุกท่าน" 2,756 แห่ง</td><td class="num">29 · 3,088</td><td>ไม่ใช้คำบรรยายนั้น ใช้แค่ชื่อ</td></tr>
+          <tr><td>คำบรรยายสั้นเกินไป</td><td>ไม่ถึง 50 ตัวอักษร</td><td class="num">—</td><td>ใช้แค่ชื่อ</td></tr>
+          <tr><td>ชื่อจังหวัดต้องตรงกับ MOTS</td><td>เพื่อรวม 2 แหล่งได้</td><td class="num">77 / 77</td><td>โค้ดตรวจทุกแถว ไม่ตรงจะหยุดทำงาน</td></tr>
+        </tbody></table></div>
+    </div>
   </div>
-  <figure>
-    <div class="ft" id="cp-title"></div>
-    <div class="chips" role="group" aria-label="เลือกคู่เมือง" id="cp-chips"></div>
-    <div class="legend" id="cp-legend"></div>
-    <div class="chart" id="ch-cp"></div>
-    <figcaption id="cp-cap"></figcaption>
-  </figure>
-</div></section>
+  <div class="pager"><button class="btn" data-go="data" type="button">← Data</button><button class="btn primary" data-go="eda" type="button">EDA →</button></div>
+</section>
 
-<section class="step" id="limits"><div class="wrap">
-  <div class="step-head"><div class="no">09 · ข้อจำกัด</div><h2>สิ่งที่ข้อมูลนี้ยังตอบไม่ได้</h2></div>
-  <ul class="clean read">
-    <li><b>"มีขาย" ≠ "ขายดี"</b> เรารู้ว่าเมืองต้นแบบมีที่พักแนวไหนอยู่ แต่ไม่มียอดจอง ราคา หรือรีวิว</li>
-    <li><b>ห้องพักนับเฉพาะที่ MOTS สำรวจ</b> ไม่รวม Airbnb หรือบ้านพักรายวัน ห้องจริงอาจโตเร็วกว่าที่เห็น</li>
-    <li><b>Gap ดูแค่ 2 ปีล่าสุด</b> และเป็นช่วงฟื้นจากโควิด ค่าไม่ใหญ่ (หนองคายราว +7 จุด%)</li>
-    <li><b>Orange กับการจับคู่ใช้ลักษณะตลาดชุดเดียวกัน</b> ผลที่ตรงกันคือ "สองวิธีให้ผลเหมือนกัน" ไม่ใช่ข้อมูลอิสระมายืนยัน</li>
-    <li><b>Directory ไม่ครบ</b> เช่น ระนองมีที่พักในระบบ 26 แห่ง ขณะที่ MOTS นับได้ 194 แห่ง ระนองและยะลาจึงมีความมั่นใจต่ำ</li>
-    <li><b>เกณฑ์บางตัวทีมตั้งเอง</b> (ตัด 25%, ฟื้น 90%, top 20) ทดสอบความไวไปแล้วบางส่วน</li>
-    <li>รอบ ครม. 2568 นับบางอำเภอใน 15 จังหวัดหลักเป็นเมืองรองด้วย งานนี้วิเคราะห์ระดับจังหวัด จึงนับ 15 จังหวัดนั้นเป็นเมืองหลัก</li>
-  </ul>
-</div></section>
+<!-- 4 EDA -->
+<section class="view" id="v-eda" data-view="eda" hidden>
+  <div class="vhead">
+    <div class="eyebrow">EDA · ข้อมูลหลังคลีนบอกอะไร</div>
+    <h2>ส่องข้อมูลก่อน แล้วค่อยตัดสินใจวิธีวิเคราะห์</h2>
+    <p class="q">EDA (Exploratory Data Analysis) คือการสำรวจข้อมูลด้วยกราฟและสถิติง่าย ๆ ก่อนสร้างโมเดล ทุกการ์ดอ่านจากบนลงล่าง: <b>ทำอะไร</b> → <b>เจออะไร</b> → <b>ตัดสินใจอะไรต่อ</b></p>
+  </div>
+  <h3 class="sub">ฝั่งตัวเลข MOTS · notebook 04 · ใช้ปี 2568 เป็นหลัก</h3>
+  <div class="split">
+    <div class="panel text">
+      <h3>ภาพรวมประเทศ: ห้องพักโตแซงคนมาพักแล้ว</h3>
+      <p class="m">ทำ: รวม 75 จังหวัดที่มีข้อมูลครบทุกปี แล้วตั้งปี 2562 (ก่อนโควิด) = 100</p>
+      <p>ปี 2568 ผู้เข้าพักกลับมาที่ <b>103.5</b> แต่ห้องพักไปถึง <b>107.8</b></p>
+      <p class="so2">→ ต้องหา<b>เฉพาะจังหวัดที่ยังกลับกัน</b> (ที่มาของ Gap) · ช่วงโควิด 2563–65 ผิดปกติ จึงใช้ 2566–2568 วิเคราะห์ และ 2562 เป็นปีฐาน</p>
+    </div>
+    <div class="panel"><figure>
+      <div class="ft">คนมาพักกลับมา 103.5 แต่ห้องพักไปถึง 107.8</div>
+      <div class="how"><b>วิธีอ่าน</b> เส้นเริ่มที่ 100 ในปี 2562 · เส้นส้มสูงกว่าเส้นฟ้า = ห้องโตเร็วกว่าคน</div>
+      <div class="legend"><span><i class="ln" style="background:var(--target)"></i>ผู้เข้าพัก</span><span><i class="ln" style="background:var(--analog)"></i>ห้องพัก</span></div>
+      <div class="chart" data-chart="nat"></div>
+      <figcaption>ภาพ 1 ใน notebook 04</figcaption>
+    </figure></div>
+  </div>
+  <div class="find">
+    <div><span class="big">≈ 35 เท่า</span><p class="m">ทำ: ดู histogram และความเบ้ (skew) ของ 6 ตัวแปร</p><p>กรุงเทพฯ มีผู้เข้าพัก 33.6 ล้าน ค่ากลางของประเทศ 0.97 ล้าน ผู้เข้าพักเบ้มาก (skew 5.1) % ต่างชาติ (2.1) และวันพัก (3.0) ก็เบ้ · ค่าสุดโต่ง 10 จังหวัดเป็นเมืองท่องเที่ยวจริง</p><p class="so">ใช้ log (ผู้เข้าพักหลัง log เบ้เหลือ 0.5) · ไม่ลบค่าสุดโต่ง · เกณฑ์ใช้การตัด 25% ล่าง แทนค่าเฉลี่ย</p></div>
+    <div><span class="big">41 → 34</span><p class="m">ทำ: คำนวณ % ที่โตของผู้เข้าพักและห้อง ช่วง 66→67 และ 67→68</p><p>Gap บวกทั้ง 2 ช่วง 41 จังหวัด แต่ <b>7 จังหวัดบวกเพราะห้องลดลง</b> ไม่ใช่คนมาเพิ่ม</p><p class="so">ด่านแรกต้องมีเงื่อนไข "ผู้เข้าพักโตจริง" ด้วย เหลือ 34</p></div>
+    <div><span class="big">40 vs 34</span><p class="m">ทำ: ลองนับความต้องการแบบ "ห้อง-คืน" (ผู้เข้าพัก × วันพัก ÷ คนต่อห้อง)</p><p>ได้ 40 จังหวัด ตรงกับแบบนับคนแค่ 26 จังหวัด แปลว่า<b>วิธีนับเปลี่ยนผล</b></p><p class="so">ทดสอบทั้ง 2 วิธีคู่กัน (ที่มาของ "6 วิธีวัด")</p></div>
+    <div><span class="big">r = 0.80</span><p class="m">ทำ: เทียบการเปลี่ยนของจำนวนห้องกับจำนวนที่พักที่ถูกสำรวจ</p><p>ห้องที่เปลี่ยนแรงมักมาจาก<b>จำนวนที่พักที่สำรวจเปลี่ยน</b> · 15 จังหวัดห้องเปลี่ยนเกิน 15% ในช่วงเดียว</p><p class="so">ติดธงไว้ (เมืองรอง 6 จังหวัดสุดท้ายไม่ติดธง) และเขียนเป็นข้อจำกัด</p></div>
+    <div><span class="big">58 / 77</span><p class="m">ทำ: ผู้เข้าพักปี 2568 ÷ ปี 2562</p><p>ค่ากลาง 101% · ฟื้นเกินก่อนโควิด 40 จังหวัด · ฟื้นถึง 90% ขึ้นไป 58 จังหวัด · ช้าสุด สมุทรสาคร 50%</p><p class="so">ด่านที่ 4 ตัดจังหวัดที่ฟื้นไม่ถึง 90%</p></div>
+    <div><span class="big">46 / 77</span><p class="m">ทำ: ดัชนีผู้เข้าพักรายเดือน + ความผันผวน (CV)</p><p>46 จังหวัดคนมาพักมากสุดเดือน<b>ธันวาคม</b> · ผันผวนมากสุด ลำปาง เพชรบูรณ์ ลำพูน · แทบไม่สัมพันธ์กับตัวแปรอื่น</p><p class="so">ใช้ค่าเฉลี่ย 3 ปี และเก็บเป็นตัวแปร เพราะเป็นข้อมูลที่ตัวอื่นไม่มี</p></div>
+    <div><span class="big">0.73 · 0.71</span><p class="m">ทำ: หาสหสัมพันธ์ (Spearman) ทุกคู่ตัวแปร</p><p>อัตราเข้าพักซ้ำกับขนาดตลาด (0.73) · ค่าที่พักซ้ำกับ % ต่างชาติ (0.71)</p><p class="so">ตัดตัวที่ซ้ำออกจากโมเดล (หน้า Screening)</p></div>
+    <div><span class="big">~10 จังหวัด</span><p class="m">ทำ: ดูภาพ % ต่างชาติ × วันพัก</p><p>จังหวัดส่วนใหญ่เป็นตลาดคนไทยพักสั้น <b>เกาะกันเป็นก้อนเดียว</b> มีราว 10 จังหวัดภาคใต้ + กรุงเทพฯ ที่แยกออกมาชัด</p><p class="so">คาดว่าการจัดกลุ่มจะแยกกลุ่มต่างชาติได้ชัด แต่กลุ่มที่เหลือแยกกันไม่ขาด (ยืนยันในหน้า Model)</p></div>
+  </div>
+  <h3 class="sub">ฝั่งข้อความ API · notebook 06 ขั้นที่ 1–3</h3>
+  <div class="split">
+    <div class="find one">
+      <div><span class="big">26 vs 194</span><p class="m">ทำ: เทียบจำนวนที่พักในระบบ API กับสถิติราชการ</p><p>ระนองมีที่พักในระบบ 26 แห่ง แต่สถิติราชการนับได้ 194 แห่ง · จำนวนในระบบขึ้นกับว่าใครไปลงทะเบียน <b>ไม่ใช่ขนาดตลาดจริง</b></p><p class="so">ใช้ <b>%</b> ของที่พักในจังหวัด ไม่ใช้จำนวน</p></div>
+      <div><span class="big">47% · 37%</span><p class="m">ทำ: นับข้อความซ้ำ ความยาว และจำนวนที่ติดป้ายได้</p><p>ที่พักมีคำบรรยายที่ใช้ได้ 47% และติดป้ายแนวที่พักได้แค่ 37% (สถานที่ท่องเที่ยวติดป้ายได้ 87%)</p><p class="so">จังหวัดที่ติดป้ายที่พักได้ไม่ถึง 10 แห่ง ให้ความมั่นใจ "ต่ำ"</p></div>
+      <div><span class="big">37.5%</span><p class="m">ทำ: % ของสถานที่ที่ติดแต่ละป้าย ทั้งประเทศ</p><p>วัดมีแทบทุกจังหวัด (37.5%) ภูเขา/ป่า 34.4% · น้ำพุร้อนมีแค่ 1.2%</p><p class="so">วัด "จุดเด่น" โดยเทียบกับค่าเฉลี่ยประเทศ (z-score) และไม่ใช้ป้ายที่ต่ำกว่า 5%</p></div>
+    </div>
+    <div class="panel"><figure>
+      <div class="ft">วัดกับภูเขามีทุกที่ · ที่พักส่วนใหญ่ไม่ได้บอกแนว</div>
+      <div class="how"><b>วิธีอ่าน</b> แท่ง = % ของรายการที่ติดป้ายนั้น · 1 รายการติดได้หลายป้าย · เส้นประ = เกณฑ์ 5%</div>
+      <div class="chart" data-chart="api"></div>
+      <figcaption>ผลจาก notebook 06 · สถานที่ท่องเที่ยว 5,877 · ที่พัก 6,990</figcaption>
+    </figure></div>
+  </div>
+  <div class="pager"><button class="btn" data-go="clean" type="button">← Cleaning</button><button class="btn primary" data-go="screen" type="button">Screening →</button></div>
+</section>
 
-<section class="step" id="glossary"><div class="wrap">
-  <div class="step-head"><div class="no">10 · คำศัพท์และอ่านเพิ่ม</div><h2>คำที่ใช้ในหน้านี้</h2></div>
-  <dl class="gloss read">
-    <div id="g-structured"><dt>ข้อมูลมีโครงสร้าง / ไม่มีโครงสร้าง <small>Structured / Unstructured</small></dt><dd>มีโครงสร้าง = ตารางตัวเลขที่มีช่องชัดเจน · ไม่มีโครงสร้าง = ข้อความอิสระ ต้องแปลงก่อนจึงคำนวณได้</dd></div>
-    <div id="g-quartile"><dt>ควอไทล์ที่ 1 <small>Quartile 1, Q1</small></dt><dd>เรียงข้อมูลจากน้อยไปมาก แล้วดูจุดที่มีข้อมูลอยู่ใต้มัน 25% ใช้เป็นเส้นตัดกลุ่มล่างสุด · <a href="https://www.gotoknow.org/posts/712819" target="_blank" rel="noopener">อ่านเพิ่ม: เปอร์เซ็นไทล์และควอไทล์ (ไทย)</a></dd></div>
-    <div id="g-log"><dt>แปลงค่าด้วย log <small>Log transform</small></dt><dd>บีบตัวเลขที่ห่างกันมากให้ใกล้กันขึ้น เช่น 1 ล้านกับ 30 ล้าน จะได้ไม่ให้จังหวัดใหญ่ตัวเดียวดึงผลทั้งหมด · <a href="https://en.wikipedia.org/wiki/Data_transformation_(statistics)" target="_blank" rel="noopener">อ่านเพิ่ม (อังกฤษ)</a></dd></div>
-    <div id="g-z"><dt>ปรับสเกล <small>Standardization, z-score</small></dt><dd>ปรับทุกตัวแปรให้ค่าเฉลี่ย = 0 และกระจายเท่ากัน คล้ายแปลงคะแนนหลายวิชาเป็นคะแนนมาตรฐานก่อนเทียบ · ค่าบวก = สูงกว่าเฉลี่ย ค่าลบ = ต่ำกว่าเฉลี่ย · <a href="https://en.wikipedia.org/wiki/Standard_score" target="_blank" rel="noopener">อ่านเพิ่ม (อังกฤษ)</a></dd></div>
-    <div id="g-encode"><dt>การเข้ารหัส <small>Encoding</small></dt><dd>แปลงข้อมูลที่ไม่ใช่ตัวเลขให้เป็นตัวเลข ในงานนี้ข้อความถูกแปลงเป็นป้าย 0/1 ต่อ concept (multi-hot)</dd></div>
-    <div id="g-stability"><dt>ความนิ่งของผล <small>Stability</small></dt><dd>จำนวนแบบทดสอบ (จาก 6) ที่จังหวัดผ่าน ยิ่งสูงยิ่งแปลว่าผลไม่ขึ้นกับวิธีวัด</dd></div>
-    <div id="g-cluster"><dt>การจัดกลุ่ม <small>Clustering</small></dt><dd>ให้เครื่องจับข้อมูลที่คล้ายกันไว้ด้วยกัน โดยไม่มีเฉลย จึงไม่ต้องแบ่งข้อมูล train/test · <a href="https://orangedatamining.com/widget-catalog/unsupervised/kmeans/" target="_blank" rel="noopener">k-Means ใน Orange (อังกฤษ)</a></dd></div>
-    <div id="g-hier"><dt>การจัดกลุ่มแบบลำดับชั้น <small>Hierarchical clustering, Ward</small></dt><dd>จับคู่จังหวัดที่คล้ายที่สุดก่อน แล้วค่อยรวมเป็นกลุ่มใหญ่ขึ้นเรื่อย ๆ ได้ภาพต้นไม้ (dendrogram) คล้ายแผนผังตระกูล · <a href="https://www.datacamp.com/th/tutorial/hierarchical-clustering" target="_blank" rel="noopener">อ่านเพิ่ม (ไทย)</a> · <a href="https://orangedatamining.com/widget-catalog/unsupervised/hierarchicalclustering/" target="_blank" rel="noopener">ใน Orange (อังกฤษ)</a></dd></div>
+<!-- 5 SCREENING -->
+<section class="view" id="v-screen" data-view="screen" hidden>
+  <div class="vhead">
+    <div class="eyebrow">Screening · notebook 05 (Python ก่อนเข้า Orange)</div>
+    <h2>เลือกตัวแปรเข้าโมเดล แล้วคัด 77 จังหวัดเหลือเมืองรอง 6 จังหวัด</h2>
+    <p class="q">หน้านี้มี 2 งาน: <b>(ก)</b> เลือกตัวแปรลักษณะลูกค้า 5 ตัวส่งเข้า Orange · <b>(ข)</b> คัดเมืองรองด้วยกฎที่ทีมตั้งไว้ก่อนดูผล ส่วน (ข) ไม่ใช่โมเดล และไม่ได้เข้า Orange</p>
+  </div>
+  <h3 class="sub">(ก) เลือกตัวแปรเข้าโมเดล</h3>
+  <div class="split">
+    <div class="panel text">
+      <p>โมเดลมีหน้าที่หา "เมืองที่<b>ลูกค้าคล้ายกัน</b>" จึงเลือกตัวแปรที่บอกว่าลูกค้าเป็นใคร มาแบบไหน และไม่ซ้ำกันเอง (สหสัมพันธ์ไม่เกิน 0.7)</p>
+      <div class="tw"><table class="t"><thead><tr><th>ตัวแปร</th><th></th><th>เหตุผล</th></tr></thead><tbody>
+        <tr><td>ขนาดตลาด (log ผู้เข้าพัก)</td><td><span class="tag keep">ใช้</span></td><td>ตลาดใหญ่หรือเล็ก</td></tr>
+        <tr><td>% ต่างชาติ (log)</td><td><span class="tag keep">ใช้</span></td><td>ลูกค้าไทยหรือต่างชาติ</td></tr>
+        <tr><td>วันพักเฉลี่ย</td><td><span class="tag keep">ใช้</span></td><td>แวะสั้นหรือพักยาว</td></tr>
+        <tr><td>ความผันผวนตามฤดู</td><td><span class="tag keep">ใช้</span></td><td>มาทั้งปีหรือมาเป็นช่วง (เฉลี่ย 3 ปี)</td></tr>
+        <tr><td>คนต่อห้อง</td><td><span class="tag keep">ใช้</span></td><td>มาคนเดียว/คู่ หรือเป็นครอบครัว</td></tr>
+        <tr><td>อัตราเข้าพัก</td><td><span class="tag drop">ไม่ใช้</span></td><td>ซ้ำกับขนาดตลาด (0.73) และใช้ในด่านแล้ว</td></tr>
+        <tr><td>ค่าที่พักต่อคน</td><td><span class="tag drop">ไม่ใช้</span></td><td>ซ้ำกับ % ต่างชาติ (0.71)</td></tr>
+        <tr><td>Gap / การเติบโต</td><td><span class="tag drop">ไม่ใช้</span></td><td>ใช้คัดจังหวัดแล้ว ใส่ซ้ำจะวนกลับมายืนยันตัวเอง</td></tr>
+        <tr><td>ภาค</td><td><span class="tag drop">ไม่ใช้</span></td><td>บอกที่ตั้ง ไม่ได้บอกพฤติกรรมลูกค้า</td></tr>
+      </tbody></table></div>
+      <p style="font-size:14px">วันพักกับคนต่อห้องสัมพันธ์กัน 0.64 ใกล้เส้น 0.7 แต่ยังเก็บทั้งคู่ เพราะบอกคนละเรื่อง · ส่งต่อเป็นไฟล์ <code>master_orange.csv</code> 77 แถว × 5 ตัวแปร</p>
+    </div>
+    <div class="panel"><figure>
+      <div class="ft">ตัวแปรที่เลือก ไม่มีคู่ไหนซ้ำกันเกิน 0.7</div>
+      <div class="how"><b>วิธีอ่าน</b> ช่องเข้ม = 2 ตัวแปรขึ้นลงไปด้วยกันมาก (ซ้ำกัน) · กรอบหนา = 5 ตัวที่ใช้ · 2 แถวล่าง = ตัวที่ตัดออก</div>
+      <div class="chart" data-chart="corr"></div>
+      <figcaption>Spearman correlation (ค่าสัมบูรณ์) · 77 จังหวัด</figcaption>
+    </figure></div>
+  </div>
+  <h3 class="sub">(ข) คัดเมืองรองเป้าหมาย 3 ขั้น</h3>
+  <div class="split">
+    <div class="panel text">
+      <span class="eyebrow">ขั้น 1 · Gap</span>
+      <h3>Gap = คนมาพักโต − ห้องพักโต</h3>
+      <p><b>บวก</b> = ห้องสร้างเพิ่มไม่ทันคน ตลาดยังมีที่ว่าง · <b>ติดลบ</b> = ห้องล้น ต้องแย่งลูกค้ากัน</p>
+      <div class="like">ซอยที่คนเดินผ่านเพิ่มทุกปี แต่ร้านกาแฟเปิดเพิ่มช้ากว่า ซอยนี้น่าเปิดร้านใหม่กว่าซอยที่ร้านเต็มแล้ว</div>
+      <p><b>ตัวอย่าง:</b> หนองคาย ปี 67→68 คนมาพักโต +7.2% ห้องพักแทบไม่เพิ่ม (−0.1%) Gap = <b>+7.4 จุด%</b></p>
+    </div>
+    <div class="panel"><figure>
+      <div class="ft">จังหวัดเหนือเส้นประ = คนมาเพิ่มเร็วกว่าห้อง</div>
+      <div class="how"><b>วิธีอ่าน</b> 1 จุด = 1 จังหวัด · ขวา = ห้องพักโตมาก · บน = คนมาพักโตมาก · จุดฟ้า = 6 เมืองรองที่ผ่านทุกวิธีวัด (ขั้น 3)</div>
+      <div class="legend"><span><i style="background:var(--target)"></i>เมืองรองที่ผ่านครบ 6 วิธีวัด</span><span><i style="background:var(--dim2)"></i>จังหวัดอื่น</span></div>
+      <div class="chart" data-chart="gap"></div>
+      <figcaption>การเติบโตสะสม 2566→2568</figcaption>
+    </figure></div>
+  </div>
+
+  <div class="split">
+    <div class="panel text">
+      <span class="eyebrow">ขั้น 2 · ด่าน (Gate)</span>
+      <h3>4 ด่านคัดจังหวัด (ตั้งเกณฑ์ก่อนดูผล)</h3>
+      <div class="like">คัดนักวิ่งเข้ารอบ ตัดคนที่ช้าที่สุด 25% ออก และดูว่าใครวิ่งดีต่อเนื่อง ไม่ใช่ฟลุคครั้งเดียว</div>
+      <ol>
+        <li><b>โตต่อเนื่อง</b> Gap บวก และคนมาพักโตจริง ทั้งปี 66→67 และ 67→68</li>
+        <li><b>ห้องที่มีขายได้ดี</b> อัตราเข้าพัก ≥ <span class="num">53.8%</span> = ตัด 25% ล่างสุด (<span class="term" data-term="g-q1">ควอไทล์ที่ 1</span>)</li>
+        <li><b>ตลาดไม่เล็กเกินไป</b> ผู้เข้าพัก ≥ <span class="num">477,915</span> คน/ปี (ตัด 25% ล่างสุด)</li>
+        <li><b>ฟื้นจากโควิดแล้ว</b> ผู้เข้าพักปี 2568 ≥ 90% ของปี 2562</li>
+      </ol>
+      <p class="callout">"Q1" ในงานนี้ = <b>ควอไทล์ที่ 1</b> (จุดแบ่ง 25% ล่างสุด) ไม่ใช่ไตรมาส 1</p>
+    </div>
+    <div class="panel"><figure>
+      <div class="ft">77 → 34 → 27 → 24 → 19 จังหวัด</div>
+      <div class="how"><b>วิธีอ่าน</b> แต่ละจุดหยุดอยู่ที่ด่านที่ตก คอลัมน์ขวาสุด = ผ่านครบ 4 ด่าน</div>
+      <div class="legend"><span><i style="background:var(--pass)"></i>ผ่านครบ 4 ด่าน</span><span><i style="background:var(--target)"></i>เมืองรองที่ผ่านครบ 6 วิธีวัด</span><span><i style="background:var(--dim2)"></i>ตกด่าน</span></div>
+      <div class="chart" data-chart="gate"></div>
+      <figcaption>วิธีวัดหลัก: นับจำนวนคน + ตัด 25% ล่างสุด</figcaption>
+    </figure></div>
+  </div>
+
+  <div class="split">
+    <div class="panel text">
+      <span class="eyebrow">ขั้น 3 · ความนิ่งของผล</span>
+      <h3>"ผ่านครบ 6/6" แปลว่าอะไร</h3>
+      <p>เกณฑ์ในด่านเป็นตัวเลขที่เราเลือกเอง ถ้าเปลี่ยนนิดเดียวแล้วคำตอบเปลี่ยน ผลก็เชื่อไม่ได้ เราจึง<b>รันด่านซ้ำ 6 ครั้ง</b> โดยเปลี่ยนวิธีวัด 2 เรื่อง</p>
+      <ul>
+        <li><b>นับดีมานด์ 2 วิธี:</b> นับจำนวนคน / นับห้อง-คืนที่ใช้จริง</li>
+        <li><b>เกณฑ์ตัด 3 ระดับ:</b> ตัด 25% ล่างสุด / ตัด 33% / ไม่ตั้งเกณฑ์ขนาดตลาด</li>
+      </ul>
+      <p><b>2 × 3 = 6 วิธีวัด</b> จังหวัดที่ผ่านครบ 6 แบบ แปลว่า<b>ไม่ว่าจะวัดแบบไหนก็ยังผ่าน</b> เราเรียกว่า <span class="term" data-term="g-stab">stability</span> = 6/6</p>
+      <div class="like">ชั่งน้ำหนักด้วยตาชั่ง 6 เครื่อง ถ้าทุกเครื่องบอกว่าเกิน 60 กก. ก็มั่นใจได้ ไม่ได้เกินเพราะตาชั่งเครื่องเดียวเพี้ยน</div>
+    </div>
+    <div class="panel"><figure>
+      <div class="ft">เมืองรอง 6 จังหวัดผ่านครบทั้ง 6 วิธีวัด</div>
+      <div class="how"><b>วิธีอ่าน</b> 1 แถว = 1 เมืองรองที่ผ่านอย่างน้อย 1 วิธี · 1 คอลัมน์ = 1 วิธีวัด · ช่องสีทึบ = ผ่านครบ 4 ด่านในวิธีนั้น (สีฟ้า = จังหวัดที่ผ่านทุกวิธี) · ตัวเลขขวาสุด = ผ่านกี่วิธี</div>
+      <div class="chart" data-chart="tests"></div>
+      <figcaption>คน = นับจำนวนผู้เข้าพัก · ห้อง-คืน = ผู้เข้าพัก × วันพัก ÷ คนต่อห้อง</figcaption>
+    </figure></div>
+  </div>
+  <div class="pager"><button class="btn" data-go="eda" type="button">← EDA</button><button class="btn primary" data-go="model" type="button">Model →</button></div>
+</section>
+
+<!-- 6 MODEL -->
+<section class="view" id="v-model" data-view="model" hidden>
+  <div class="vhead">
+    <div class="eyebrow">Model · จัดกลุ่มใน Orange</div>
+    <h2>Hierarchical Clustering (Ward) จัด 77 จังหวัดเป็น 4 กลุ่มลูกค้า</h2>
+    <p class="q">ใช้หาว่า "เมืองไหนลูกค้าคล้ายกัน" เพื่อหาเมืองต้นแบบให้เมืองรอง</p>
+  </div>
+  <div class="split">
+    <div class="panel text">
+      <h3>Orange อยู่ตรงไหนของงาน</h3>
+      <p><b>ก่อน Orange (Python 05):</b> คัดเมืองรอง 6 จังหวัด และส่งไฟล์ <code>master_orange.csv</code> ที่มี<b>ครบ 77 จังหวัด</b></p>
+      <p><b>ใน Orange:</b> จัดกลุ่ม<b>ทั้ง 77 จังหวัด</b> เพราะต้องมีเมืองหลักอยู่ด้วยจึงหาเมืองต้นแบบได้ ผลการคัดติดไปเป็นคอลัมน์ meta <b>ไม่ได้ใช้คำนวณกลุ่ม</b></p>
+      <p><b>หลัง Orange (Python 06):</b> อ่าน <code>orange_clusters.csv</code> ไปจับคู่เมือง (หน้า Matching)</p>
+    </div>
+    <div class="panel"><figure>
+      <div class="ft">Workflow ใน Orange</div>
+      <div class="how"><b>วิธีอ่าน</b> อ่านจากซ้ายไปขวา · เส้นบน = เส้นที่ใช้จริง (Hierarchical) · เส้นล่าง = k-Means ไว้เทียบคะแนน</div>
+      <a class="shotlink" href="img/orange_workflow.png" target="_blank" rel="noopener"><img class="shot" src="img/orange_workflow.png" alt="Orange workflow: File, Standardize, Distances, Hierarchical Ward k=4, Box Plot, MDS, Data Table, Save Data และสาย k-Means กับ Silhouette" loading="lazy"></a>
+      <figcaption>Standardize (ค่าเฉลี่ย 0, SD 1) → Distances (Euclidean) → Hierarchical (Ward, 4 กลุ่ม) → Save Data</figcaption>
+    </figure></div>
+  </div>
+  <div class="stackp">
+    <div class="panel text">
+      <h3>ทำไมใช้ Clustering ไม่ใช่ Regression / Classification</h3>
+      <div class="tw"><table class="t stack long"><thead><tr><th>วิธี</th><th>ทำอะไร</th><th>ต้องมีอะไร</th><th>เหมาะกับงานเราไหม</th></tr></thead><tbody>
+        <tr><td>Regression</td><td>ทำนายตัวเลข เช่น ผู้เข้าพักปีหน้า</td><td>ตัวเลขเป้าหมาย + ข้อมูลหลายปี</td><td>✗ คำถามเราไม่ใช่การพยากรณ์ และหลังโควิดมีแค่ 3 ปี</td></tr>
+        <tr><td>Classification</td><td>ทายประเภท เช่น ดี / ไม่ดี</td><td><b>เฉลย</b>ที่ถูกต้องไว้สอนเครื่อง</td><td>✗ ไม่มีเฉลย ถ้าใช้ผลการคัดเป็นเฉลย เครื่องก็แค่เรียนกฎที่เราตั้งเอง</td></tr>
+        <tr><td><b>Clustering</b></td><td>จับจังหวัดที่คล้ายกันไว้ด้วยกัน</td><td>แค่ตัวแปร ไม่ต้องมีเฉลย</td><td>✓ ตรงกับคำถาม "เมืองไหนลูกค้าคล้ายกัน"</td></tr>
+      </tbody></table></div>
+      <div class="like">จัดนักเรียนเป็นกลุ่มตามนิสัยการเรียน ไม่มีเฉลยว่ากลุ่มไหนถูก เครื่องแค่จับคนที่คล้ายกันไว้ด้วยกัน จึง<b>ไม่ต้องแบ่ง train/test</b></div>
+    </div>
+    <div class="panel text">
+      <h3>ทำไมเลือก Hierarchical (Ward)</h3>
+      <div class="tw"><table class="t stack long"><thead><tr><th>วิธี</th><th>ข้อดี</th><th>ข้อเสีย</th><th>ผล</th></tr></thead><tbody>
+        <tr><td><b>Hierarchical (Ward)</b></td><td>ผลเหมือนเดิมทุกครั้ง · มีภาพต้นไม้ (dendrogram) เห็นว่ากลุ่มรวมกันยังไง</td><td>Silhouette ที่ 4 กลุ่มต่ำกว่า k-Means เล็กน้อย</td><td>ใช้จริง</td></tr>
+        <tr><td>k-Means</td><td>ง่าย เร็ว · Silhouette ที่ 4 กลุ่ม 0.265</td><td>ผลขึ้นกับจุดเริ่มสุ่ม · ไม่มีภาพต้นไม้</td><td>ใช้เป็นสายเทียบ</td></tr>
+        <tr><td>DBSCAN</td><td>หาก้อนรูปร่างแปลก ๆ ได้</td><td>ต้องตั้งรัศมีเอง · 77 จุดน้อยไป</td><td>ไม่ได้ทดลอง</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+  <div class="split">
+    <div class="panel text">
+      <h3>เลือก 4 กลุ่มยังไง</h3>
+      <p><span class="term" data-term="g-sil">Silhouette</span> วัดว่าแต่ละจังหวัดอยู่ใกล้เพื่อนในกลุ่มมากกว่ากลุ่มข้าง ๆ แค่ไหน (−1 ถึง 1 ยิ่งสูงยิ่งแยกชัด)</p>
+      <div class="like">นั่งโต๊ะกลุ่มในห้องเรียน ถ้าทุกคนสนิทกับเพื่อนโต๊ะตัวเองมากกว่าโต๊ะข้าง ๆ คะแนนจะสูง</div>
+      <p>คะแนนสูงสุดที่ <b>2 กลุ่ม (0.43)</b> แต่แค่แยกเมืองต่างชาติ 9 จังหวัดออกจากที่เหลือ ใช้หาเมืองต้นแบบไม่ได้ ส่วน 3–8 กลุ่มคะแนนใกล้กัน (0.22–0.30) เราเลือก <b>4 กลุ่ม เพราะอ่านความหมายได้ชัด</b> ไม่ใช่เพราะคะแนนสูงสุด</p>
+      <a class="shotlink" href="img/orange_kmeans_silhouette.png" target="_blank" rel="noopener"><img class="shot" src="img/orange_kmeans_silhouette.png" alt="Orange k-Means Silhouette Scores k=2 ถึง 8: 0.434, 0.296, 0.265, 0.264, 0.272, 0.251, 0.227" loading="lazy"></a>
+      <p style="font-size:13px;color:var(--muted)">ภาพจาก Orange: คะแนน Silhouette ของ k-Means</p>
+    </div>
+    <div class="panel"><figure>
+      <div class="ft">2 กลุ่มคะแนนสูงสุด แต่ 3–8 กลุ่มคะแนนพอ ๆ กัน</div>
+      <div class="how"><b>วิธีอ่าน</b> แต่ละจุด = คะแนนของการแบ่งเป็น k กลุ่ม · แถบ = k ที่เลือก · เกณฑ์ทั่วไป: เกิน 0.5 = แยกชัด · 0.26–0.5 = แยกอ่อน · ต่ำกว่า 0.25 = แทบไม่เป็นก้อน</div>
+      <div class="legend"><span><i class="ln" style="background:var(--target)"></i>Hierarchical Ward (ใช้จริง)</span><span><i class="ln" style="background:var(--dim2)"></i>k-Means (เทียบ)</span></div>
+      <div class="chart" data-chart="sil"></div>
+      <figcaption>k-Means จาก Orange · Ward คำนวณด้วย Python จากข้อมูลชุดเดียวกัน</figcaption>
+    </figure></div>
+  </div>
+  <div class="split">
+    <div class="panel text">
+      <h3>ได้ 4 กลุ่มอะไรบ้าง</h3>
+      <p>ตั้งชื่อกลุ่มจากค่ากลางของแต่ละกลุ่ม ตัวแปรที่แยกกลุ่มได้ชัดที่สุดคือ <b>% ต่างชาติ</b> (Box Plot ใน Orange: ANOVA F = 44.1, p &lt; 0.001)</p>
+      <div class="tw"><table class="t"><thead><tr><th>กลุ่ม</th><th>จังหวัด</th><th>ต่างชาติ</th><th>พักเฉลี่ย</th></tr></thead><tbody id="cl-table"></tbody></table></div>
+      <p style="font-size:13px;color:var(--muted)">ต่างชาติ และ พักเฉลี่ย = ค่ากลางของกลุ่ม</p>
+      <a class="shotlink" href="img/orange_boxplot.png" target="_blank" rel="noopener"><img class="shot" src="img/orange_boxplot.png" alt="Orange Box Plot ของ log_foreign_pct แยกตามกลุ่ม C1 ถึง C4 ANOVA 44.116" loading="lazy"></a>
+    </div>
+    <div class="panel"><figure>
+      <div class="ft">ต้นไม้การจัดกลุ่ม (Dendrogram) ตัดที่ 4 กลุ่ม</div>
+      <div class="how"><b>วิธีอ่าน</b> 1 เส้นขวาสุด = 1 จังหวัด · เส้นที่รวมกันเร็ว (ใกล้ขวา) = คล้ายกันมาก · สี = 4 กลุ่ม</div>
+      <a class="shotlink" href="img/orange_dendrogram.png" target="_blank" rel="noopener"><img class="shot" src="img/orange_dendrogram.png" alt="Dendrogram จาก Orange แบบ Ward ตัด Top N = 4 กลุ่ม C1 C2 C3 C4" loading="lazy"></a>
+      <figcaption>Hierarchical (Ward) ใน Orange · Top N = 4</figcaption>
+    </figure></div>
+  </div>
+  <div class="panel"><figure>
+    <div class="ft">แผนที่ความคล้าย (MDS): 77 จังหวัดบนภาพ 2 มิติ</div>
+    <div class="how"><b>วิธีอ่าน</b> จุดใกล้กัน = ลูกค้าคล้ายกัน · สี = กลุ่ม (ฟ้า C1 · แดง C2 · เขียว C3 · ส้ม C4) · วงกลม = เมืองหลัก · กากบาท = เมืองรอง</div>
+    <a class="shotlink" href="img/orange_mds.png" target="_blank" rel="noopener"><img class="shot" src="img/orange_mds.png" alt="MDS จาก Orange สีตามกลุ่ม Kruskal stress 0.172" loading="lazy"></a>
+    <figcaption>Kruskal stress 0.172 = ภาพ 2 มิติพอใช้ดูภาพรวม · กลุ่มฟ้า (ต่างชาติ) แยกออกชัด ส่วนเขียวกับส้มปนกัน ตรงกับคะแนน Silhouette ที่ต่ำ · เชียงใหม่อยู่ห่างจากเพื่อนในกลุ่ม</figcaption>
+  </figure></div>
+  <div class="panel">
+    <h3>วัดผลด้วยอะไร และโมเดลนี้ดีที่สุดไหม</h3>
+    <div class="cols4">
+      <div class="kpi"><span class="l">Silhouette (Ward 4 กลุ่ม)</span><span class="v">0.218</span><span class="d">ต่ำ · กลุ่มแยกกันไม่ชัด</span></div>
+      <div class="kpi"><span class="l">ANOVA % ต่างชาติ</span><span class="v">F 44.1</span><span class="d">p &lt; 0.001 · กลุ่มต่างกันจริง</span></div>
+      <div class="kpi"><span class="l">MDS stress</span><span class="v">0.172</span><span class="d">ภาพ 2 มิติพอใช้ดูภาพรวม</span></div>
+      <div class="kpi"><span class="l">รันซ้ำด้วย Python</span><span class="v">77 / 77</span><span class="d">จังหวัดอยู่กลุ่มเดิมทุกจังหวัด</span></div>
+    </div>
+    <div class="cols2 text">
+      <p><b>ตอบตรง ๆ: ไม่มีวิธีไหนชนะขาด</b> คะแนนทุกวิธีที่ 3–8 กลุ่มอยู่แค่ 0.22–0.30 แปลว่าจังหวัดไทยส่วนใหญ่<b>ไม่ได้แบ่งเป็นก้อนชัด</b> ตรงกับที่ EDA เห็นว่าตลาดคนไทยเกาะเป็นก้อนเดียว เราจึงเลือกวิธีที่<b>อธิบายได้และได้ผลเดิมทุกครั้ง</b></p>
+      <div>
+        <p><b>ทดสอบเพิ่ม (Python):</b> ถ้าเปลี่ยนเป็น k-Means 4 กลุ่ม ความหมายของกลุ่มคล้ายเดิม (ARI 0.63–0.69 จาก 1) แต่จังหวัดที่อยู่<b>ขอบกลุ่ม</b>ย้าย เช่น เชียงใหม่ไปอยู่กับฮับต่างชาติ กาญจนบุรีไปอยู่กลุ่มคนไทยแวะสั้น คู่เมืองจึงเปลี่ยนตามวิธี</p>
+        <p>แต่ถ้า<b>ไม่ใช้กลุ่มเลย</b> แล้ววัดระยะตลาดตรง ๆ เมืองต้นแบบที่ใกล้หนองคายที่สุดใน 13 เมืองคือ<b>กาญจนบุรี</b> (1.54) และลำปาง แม่ฮ่องสอนใกล้เชียงใหม่ที่สุด → คำตอบหลักยังยืน ส่วนยะลาและระนองอ่อนกว่า</p>
+      </div>
+    </div>
+  </div>
+  <div class="pager"><button class="btn" data-go="screen" type="button">← Screening</button><button class="btn primary" data-go="join" type="button">Matching →</button></div>
+</section>
+
+<!-- 7 MATCHING -->
+<section class="view" id="v-join" data-view="join" hidden>
+  <div class="vhead">
+    <div class="eyebrow">Matching · รวมตัวเลข MOTS กับข้อความ API (notebook 06)</div>
+    <h2>2 แหล่งข้อมูลมาเจอกันที่ "ชื่อจังหวัด" แล้วใช้จับคู่เมืองต้นแบบ</h2>
+  </div>
+  <div class="panel">
+    <h3>รวมกันยังไง</h3>
+    <div class="joinv">
+      <div><span class="eyebrow">API · ต่อสถานที่</span><b>5,877 + 6,990 แถว</b><span>ติดป้าย 0/1 ต่อรายการ</span></div>
+      <i>→</i>
+      <div><span class="eyebrow">สรุปรายจังหวัด</span><b>77 แถว</b><span>% ของสถานที่ / ที่พักที่มีแต่ละป้าย</span></div>
+      <i>+</i>
+      <div><span class="eyebrow">MOTS + Orange</span><b>77 แถว</b><span>กลุ่มลูกค้า · เมืองรอง/หลัก · ผลการคัด · 5 ตัวแปร</span></div>
+      <i>=</i>
+      <div class="hl"><span class="eyebrow">ตารางรวม</span><b>77 แถว (1 ต่อ 1)</b><span>key = ชื่อจังหวัดภาษาไทย</span></div>
+    </div>
+    <p style="font-size:14px;color:var(--ink2)">ต้องสรุป API เป็นรายจังหวัดก่อน เพราะ MOTS มีแค่ระดับจังหวัด · ก่อนรวม โค้ดตรวจว่าชื่อจังหวัดใน API ทุกแถวตรงกับ 77 จังหวัดของ MOTS</p>
+  </div>
+  <div class="split">
+    <div class="panel text">
+      <h3>ติดป้ายข้อความยังไง (Encoding)</h3>
+      <p>อ่านชื่อ + คำบรรยายทุกรายการ เจอคำสำคัญของป้ายไหนก็ติดป้ายนั้น (1 รายการติดได้หลายป้าย) ได้เป็นตัวเลข 0/1 ต่อป้าย แล้วเฉลี่ยเป็น % ต่อจังหวัด</p>
+      <div class="like">ใช้ปากกาไฮไลต์หลายสีอ่านรีวิว เจอคำว่า "ดอย" ไฮไลต์เขียว เจอ "ริมน้ำ" ไฮไลต์ฟ้า แล้วนับว่าแต่ละจังหวัดมีสีไหนเยอะ</div>
+      <h3>ป้ายเชื่อได้แค่ไหน</h3>
+      <p>สุ่มรายการให้คนอ่านตรวจทีละป้าย (<span class="term" data-term="g-prec">Precision</span>)</p>
+      <div class="cols2">
+        <div class="kpi"><span class="l">รอบ 1</span><span class="v">84%</span><span class="d">ถูก 56 จาก 67 ป้าย</span></div>
+        <div class="kpi"><span class="l">รอบ 2 (หลังแก้ ตัวอย่างใหม่)</span><span class="v" style="color:var(--good)">93%</span><span class="d">ถูก 55 จาก 59 ป้าย</span></div>
+      </div>
+      <p style="font-size:14px">คำที่หลอกระบบและแก้แล้ว: "วัด" ใน "จัง<b>หวัด</b>" · "ทะเล" ใน "ระดับน้ำ<b>ทะเล</b>" · "ป่า" ใน "<b>ป่า</b>ตอง" · "ไร่" ใน "35 <b>ไร่</b>" · ยังไม่ได้วัดว่าระบบพลาดไม่ได้ติดป้ายไปกี่รายการ</p>
+    </div>
+    <div class="panel">
+      <div class="tw"><table class="t">
+        <thead><tr><th>ป้าย</th><th>คำสำคัญ (ตัวอย่าง)</th><th>ทั้งประเทศ</th></tr></thead>
+        <tbody>
+          <tr><td colspan="3"><b>จุดขายจังหวัด · จากสถานที่ท่องเที่ยว (8 ป้าย)</b></td></tr>
+          <tr><td>วัด/ศาสนา</td><td>วัด, พระธาตุ, เจดีย์, มัสยิด</td><td class="num">37.5%</td></tr>
+          <tr><td>ภูเขา/ป่า/น้ำตก</td><td>ดอย, น้ำตก, อุทยานแห่งชาติ, จุดชมวิว</td><td class="num">34.4%</td></tr>
+          <tr><td>แม่น้ำ/ทะเลสาบ</td><td>แม่น้ำ, ลำน้ำ, เขื่อน, บึง</td><td class="num">20.3%</td></tr>
+          <tr><td>ประวัติศาสตร์</td><td>พิพิธภัณฑ์, โบราณ, เมืองเก่า</td><td class="num">19.3%</td></tr>
+          <tr><td>เกษตร/ฟาร์ม</td><td>ฟาร์ม, ไร่, สวนผลไม้</td><td class="num">10.8%</td></tr>
+          <tr><td>ทะเล/เกาะ</td><td>ทะเล, ชายหาด, หมู่เกาะ, ดำน้ำ</td><td class="num">10.3%</td></tr>
+          <tr><td>ชุมชน/วิถีถิ่น</td><td>ตลาดน้ำ, ถนนคนเดิน, ผ้าทอ</td><td class="num">9.8%</td></tr>
+          <tr><td>น้ำพุร้อน/สุขภาพ</td><td>น้ำพุร้อน, บ่อน้ำร้อน, สปา</td><td class="num">1.2%</td></tr>
+          <tr><td colspan="3"><b>แนวที่พัก · จากที่พัก (9 ป้าย)</b></td></tr>
+          <tr><td>ธรรมชาติ/วิว</td><td>ธรรมชาติ, ดอย, ทุ่งนา, ริมน้ำ, ริมแม่น้ำ</td><td class="num">13.4%</td></tr>
+          <tr><td>ธุรกิจ/ในเมือง</td><td>ใจกลางเมือง, ห้องประชุม</td><td class="num">8.2%</td></tr>
+          <tr><td>โฮมสเตย์/ชุมชน</td><td>โฮมสเตย์, วิถีชีวิต</td><td class="num">5.9%</td></tr>
+          <tr><td>สปา/สุขภาพ</td><td>สปา, นวด, wellness</td><td class="num">5.7%</td></tr>
+          <tr><td>บูทีค/ดีไซน์</td><td>บูทีค, ลอฟท์, คาเฟ่</td><td class="num">4.3%</td></tr>
+          <tr><td>ริมทะเล</td><td>ติดทะเล, ชายหาด, วิวทะเล</td><td class="num">4.1%</td></tr>
+          <tr><td>พูลวิลล่า</td><td>พูลวิลล่า, สระว่ายน้ำส่วนตัว</td><td class="num">3.3%</td></tr>
+          <tr><td>โฮสเทล/ประหยัด</td><td>โฮสเทล, ราคาประหยัด</td><td class="num">3.1%</td></tr>
+          <tr><td>แคมป์/แกลมปิ้ง</td><td>แคมป์, เต็นท์, glamping</td><td class="num">1.3%</td></tr>
+        </tbody></table></div>
+    </div>
+  </div>
+  <div class="panel text">
+    <h3>กฎเลือกเมืองต้นแบบ (ตั้งก่อนดูผล)</h3>
+    <ol>
+      <li>อยู่<b>กลุ่มเดียวกัน</b>ใน Orange = ลูกค้าคล้ายกัน <small>(จาก MOTS)</small></li>
+      <li>เป็น<b>เมืองหลัก</b>ที่ผู้เข้าพักติด 20 อันดับแรก = ตลาดพิสูจน์แล้ว (มี 13 เมือง) <small>(จาก MOTS)</small></li>
+      <li>เด่นใน<b>จุดขายหลักเดียวกัน</b> แล้วเลือกตัวที่จุดขายคล้ายที่สุด <small>(จาก API)</small></li>
+    </ol>
+    <div class="tw"><table class="t"><thead><tr><th>เมืองรอง</th><th>เมืองต้นแบบ</th><th>กลุ่ม</th><th>จุดขายคล้าย</th><th>ระยะตลาด</th></tr></thead><tbody id="pair-rows"></tbody></table></div>
+    <p style="font-size:13px;color:var(--muted)">จุดขายคล้าย = cosine ของจุดเด่น (−1 ถึง 1 ยิ่งสูงยิ่งคล้าย) · ระยะตลาด = ระยะห่างของ 5 ตัวแปรหลังปรับสเกล (ยิ่งต่ำยิ่งคล้าย)</p>
+    <p class="callout"><b>ชัยภูมิหลุด</b> ในกลุ่มของชัยภูมิ (C3) ไม่มีเมืองต้นแบบ · <b>เชียงใหม่</b>เป็นต้นแบบให้ 3 เมือง</p>
+  </div>
+  <div class="pager"><button class="btn" data-go="model" type="button">← Model</button><button class="btn primary" data-go="insight" type="button">Answer →</button></div>
+</section>
+
+<!-- 8 ANSWER -->
+<section class="view" id="v-insight" data-view="insight" hidden>
+  <div class="vhead">
+    <div class="eyebrow">Answer · ควรทำที่พักแบบไหน</div>
+    <h2>เมืองต้นแบบมีที่พักแบบไหน ที่เมืองรองยังมีน้อย</h2>
+  </div>
+  <div class="split">
+    <div class="panel text">
+      <h3>ทำอะไร</h3>
+      <p>เทียบ % ที่พักแต่ละแนว ระหว่างเมืองรองกับเมืองต้นแบบ แนวที่<b>ต้นแบบมีมาก แต่เมืองรองมีน้อย</b> = สมมติฐานว่าตลาดยังมีที่ว่าง (notebook 06 ขั้นที่ 5)</p>
+      <p style="font-size:14px">ไม่เสนอแนวที่เมืองรองไม่มีจุดขายรองรับ เช่น "ริมทะเล" ต้องมีทะเล · เมืองรองที่ติดป้ายที่พักได้ไม่ถึง 10 แห่ง ให้ความมั่นใจ "ต่ำ"</p>
+      <h3>เลือกคู่เมือง</h3>
+      <div class="chips" role="group" aria-label="เลือกคู่เมือง" id="cp-chips"></div>
+    </div>
+    <div class="panel"><figure>
+      <div class="ft" id="cp-title"></div>
+      <div class="how"><b>วิธีอ่าน</b> แท่งฟ้า = เมืองรอง · แท่งส้ม = เมืองต้นแบบ · แท่งส้มยาวกว่ามาก = เมืองต้นแบบมีที่พักแนวนั้นเยอะ แต่เมืองรองยังมีน้อย</div>
+      <div class="legend" id="cp-legend"></div>
+      <div class="chart" data-chart="concept"></div>
+      <figcaption id="cp-cap"></figcaption>
+    </figure></div>
+  </div>
+  <div class="split">
+    <div class="panel text">
+      <h3>สรุปคำตอบ</h3>
+      <p class="answer"><b>หนองคาย × ที่พักแนวธรรมชาติ/วิว</b></p>
+      <p>กาญจนบุรีมีที่พักแนวนี้ <b>54%</b> ขณะที่หนองคายมี <b>16%</b> ทั้งที่ลูกค้าคล้ายกันและเด่นเรื่องแม่น้ำเหมือนกัน</p>
+      <p>นี่คือ<b>สมมติฐานให้ศึกษาต่อ</b> ไม่ใช่คำยืนยันว่าลงทุนแล้วกำไร</p>
+    </div>
+    <div class="panel text">
+      <h3>ทำไมเชื่อได้ระดับหนึ่ง</h3>
+      <ul>
+        <li>ผู้เข้าพักโตเร็วกว่าห้อง +6.6 และ +7.4 จุด% และผ่านครบ <b>6/6 วิธีวัด</b></li>
+        <li>กาญจนบุรีเป็นเมืองต้นแบบที่<b>ตลาดใกล้หนองคายที่สุด</b> แม้ไม่ใช้กลุ่ม (ระยะ 1.54)</li>
+        <li>ทั้งคู่เด่นเรื่อง<b>แม่น้ำ</b> (จุดขายคล้าย 0.64)</li>
+        <li>หนองคายติดป้ายที่พักได้ 37 จาก 118 แห่ง (ความมั่นใจพอใช้) · ป้ายถูก 93%</li>
+      </ul>
+      <p style="font-size:14px"><b>ยังไม่รู้:</b> ราคา ยอดจอง รีวิว ว่าแนวนี้ "ขายดี" จริงไหม → ขั้นต่อไปที่ควรทำ</p>
+    </div>
+  </div>
+  <div class="pager"><button class="btn" data-go="join" type="button">← Matching</button><button class="btn primary" data-go="notes" type="button">Notes →</button></div>
+</section>
+
+<!-- 6 NOTES -->
+<section class="view" id="v-notes" data-view="notes" hidden>
+  <div class="vhead">
+    <div class="eyebrow">Notes · ข้อจำกัดและคำศัพท์</div>
+    <h2>สิ่งที่ข้อมูลนี้ยังตอบไม่ได้ และความหมายของคำที่ใช้</h2>
+  </div>
+  <div class="cols2">
+    <div class="panel text"><h3>"มีขาย" ≠ "ขายดี"</h3><p>รู้ว่าเมืองต้นแบบมีที่พักแนวไหน แต่ไม่มียอดจอง ราคา หรือรีวิว</p></div>
+    <div class="panel text"><h3>ห้องพักนับเฉพาะที่ราชการสำรวจ</h3><p>ไม่รวม Airbnb หรือบ้านพักรายวัน ห้องจริงอาจโตเร็วกว่าที่เห็น</p></div>
+    <div class="panel text"><h3>Gap ดูแค่ 2 ปีล่าสุด</h3><p>เป็นช่วงฟื้นจากโควิด และค่าไม่ใหญ่ (หนองคาย +6.6 และ +7.4 จุด%)</p></div>
+    <div class="panel text"><h3>กลุ่มลูกค้าแยกกันไม่ขาด</h3><p>Silhouette 0.218 (คำนวณด้วย Python ยังไม่ได้ทำใน Orange) · ถ้าเปลี่ยนเป็น k-Means เมืองต้นแบบที่อยู่ขอบกลุ่มจะย้ายกลุ่ม คู่หนองคาย–กาญจนบุรียังยืนเพราะตลาดใกล้กันที่สุดเมื่อวัดตรง ๆ แต่คู่อื่นควรอ่านแบบระวัง</p></div>
+    <div class="panel text"><h3>Directory ไม่ครบ</h3><p>ที่พักในระบบขึ้นกับการลงทะเบียน · ระนองมีในระบบ 26 แห่ง แต่สถิติราชการนับได้ 194 แห่ง ระนองและยะลาจึงมั่นใจต่ำ</p></div>
+    <div class="panel text"><h3>ป้ายข้อความวัดแค่ความแม่น</h3><p>รู้ว่าป้ายที่ติดถูก 93% แต่ยังไม่รู้ว่าระบบพลาดไม่ได้ติดป้ายไปกี่รายการ · ที่พักติดป้ายได้แค่ 37%</p></div>
+    <div class="panel text"><h3>เกณฑ์บางตัวทีมตั้งเอง</h3><p>ตัด 25%, ฟื้น 90%, 20 อันดับแรก ทดสอบความไวไปแล้วบางส่วน · รอบ ครม. 2568 นับบางอำเภอใน 15 จังหวัดหลักเป็นเมืองรองด้วย แต่งานนี้วิเคราะห์ระดับจังหวัด</p></div>
+  </div>
+  <h2 style="margin-top:8px">คำศัพท์ · Glossary</h2>
+  <dl class="gl">
+    <div id="g-struct"><dt>ข้อมูลมีโครงสร้าง / ไม่มีโครงสร้าง <small>Structured / Unstructured</small></dt><dd>มีโครงสร้าง = ตารางตัวเลขที่มีช่องชัดเจน · ไม่มีโครงสร้าง = ข้อความอิสระ ต้องแปลงก่อนจึงคำนวณได้</dd></div>
+    <div id="g-api"><dt>เอพีไอ <small>API, REST API</small></dt><dd>ช่องทางให้โปรแกรมขอข้อมูลจากระบบอื่นโดยตรง เหมือนสั่งอาหารผ่านพนักงานแทนการเข้าครัวเอง · <a href="https://www.blognone.com/node/108385" target="_blank" rel="noopener">อ่านเพิ่ม (ไทย)</a></dd></div>
+    <div id="g-q1"><dt>ควอไทล์ที่ 1 <small>Quartile 1, Q1</small></dt><dd>เรียงข้อมูลจากน้อยไปมาก จุดที่มีข้อมูลอยู่ใต้มัน 25% · <a href="https://www.gotoknow.org/posts/712819" target="_blank" rel="noopener">อ่านเพิ่ม (ไทย)</a></dd></div>
+    <div id="g-log"><dt>แปลงค่าด้วย log <small>Log transform</small></dt><dd>บีบตัวเลขที่ห่างกันมากให้ใกล้กัน จังหวัดใหญ่ตัวเดียวจะได้ไม่ดึงผลทั้งหมด · <a href="https://en.wikipedia.org/wiki/Data_transformation_(statistics)" target="_blank" rel="noopener">อ่านเพิ่ม (อังกฤษ)</a></dd></div>
+    <div id="g-z"><dt>ปรับสเกล <small>Standardization, z-score</small></dt><dd>ปรับทุกตัวแปรให้ค่าเฉลี่ย = 0 กระจายเท่ากัน เหมือนแปลงคะแนนหลายวิชาเป็นคะแนนมาตรฐานก่อนเทียบ · <a href="https://en.wikipedia.org/wiki/Standard_score" target="_blank" rel="noopener">อ่านเพิ่ม (อังกฤษ)</a></dd></div>
+    <div id="g-enc"><dt>การเข้ารหัส <small>Encoding</small></dt><dd>แปลงสิ่งที่ไม่ใช่ตัวเลขเป็นตัวเลข ในงานนี้ข้อความถูกแปลงเป็นป้าย 0/1 ต่อแนวที่พัก</dd></div>
+    <div id="g-stab"><dt>ความนิ่งของผล <small>Stability</small></dt><dd>จำนวนวิธีวัด (จาก 6) ที่จังหวัดผ่านด่านครบ ยิ่งสูงยิ่งแปลว่าผลไม่ขึ้นกับวิธีวัด</dd></div>
+    <div id="g-cluster"><dt>การจัดกลุ่ม <small>Clustering</small></dt><dd>ให้เครื่องจับข้อมูลที่คล้ายกันไว้ด้วยกันโดยไม่มีเฉลย จึงไม่ต้องแบ่งข้อมูล train/test · <a href="https://orangedatamining.com/widget-catalog/unsupervised/kmeans/" target="_blank" rel="noopener">ใน Orange (อังกฤษ)</a></dd></div>
+    <div id="g-hier"><dt>การจัดกลุ่มแบบลำดับชั้น <small>Hierarchical clustering, Ward</small></dt><dd>จับคู่ที่คล้ายที่สุดก่อนแล้วค่อยรวมเป็นกลุ่มใหญ่ ได้ภาพต้นไม้คล้ายแผนผังตระกูล · <a href="https://www.datacamp.com/th/tutorial/hierarchical-clustering" target="_blank" rel="noopener">อ่านเพิ่ม (ไทย)</a> · <a href="https://orangedatamining.com/widget-catalog/unsupervised/hierarchicalclustering/" target="_blank" rel="noopener">ใน Orange</a></dd></div>
     <div id="g-sil"><dt>ซิลูเอตต์ <small>Silhouette score</small></dt><dd>คะแนน −1 ถึง 1 บอกว่าแต่ละจังหวัด "อยู่ถูกกลุ่ม" แค่ไหน ใช้ช่วยเลือกจำนวนกลุ่ม · <a href="https://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html" target="_blank" rel="noopener">อ่านเพิ่ม (อังกฤษ)</a></dd></div>
-    <div id="g-precision"><dt>ความแม่นของป้าย <small>Precision</small></dt><dd>ในป้ายที่ระบบติดไป มีกี่ % ที่ถูกจริง · <a href="https://en.wikipedia.org/wiki/Precision_and_recall" target="_blank" rel="noopener">อ่านเพิ่ม (อังกฤษ)</a></dd></div>
+    <div id="g-prec"><dt>ความแม่นของป้าย <small>Precision</small></dt><dd>ในป้ายที่ระบบติด มีกี่ % ที่ถูกจริง · <a href="https://en.wikipedia.org/wiki/Precision_and_recall" target="_blank" rel="noopener">อ่านเพิ่ม (อังกฤษ)</a></dd></div>
   </dl>
-</div></section>
+  <footer>
+    <p>ข้อมูล: กระทรวงการท่องเที่ยวและกีฬา (สถิติที่พักรายจังหวัด 2556–2568) · Thailand Tourism Directory API · รายชื่อเมืองรองตามมติ ครม. (<a href="https://www.thansettakij.com/business/tourism/597922" target="_blank" rel="noopener">ฐานเศรษฐกิจ</a>, <a href="https://thaipublica.org/2025/10/cabinet-approves-5-tourism-packages-secondary-cities-tax-deduction-30000-baht/" target="_blank" rel="noopener">Thaipublica</a>) · ไม่ใช้ข้อมูล Kaggle/UCI</p>
+    <p>เครื่องมือ: Python (Google Colab) ดึงข้อมูล ทำความสะอาด สร้างตัวแปร ติดป้ายข้อความ · Orange สำหรับ Modeling · ใช้ AI (Claude) ช่วยเขียนโค้ดและร่างหน้านี้ ทีมเป็นผู้ตัดสินใจเรื่องโจทย์ เกณฑ์ และตรวจผล</p>
+    <p>DADS5002 · NIDA</p>
+  </footer>
+  <div class="pager"><button class="btn" data-go="insight" type="button">← Answer</button><button class="btn primary" data-go="overview" type="button">Back to Overview</button></div>
+</section>
 
-<footer><div class="wrap">
-  <p>ข้อมูล: กระทรวงการท่องเที่ยวและกีฬา (สถิติที่พักรายจังหวัด 2556–2568) · Thailand Tourism Directory API · รายชื่อเมืองรองตามมติ ครม.</p>
-  <p>เครื่องมือ: Python (Google Colab) สำหรับดึงข้อมูล ทำความสะอาด และสร้างตัวแปร · Orange สำหรับ Modeling · ใช้ AI (Claude) ช่วยเขียนโค้ดและร่างหน้านี้ ทีมเป็นผู้ตัดสินใจเรื่องโจทย์ เกณฑ์ และตรวจผล</p>
-  <p>DADS5002 · NIDA</p>
-</div></footer>
-
+</div></main>
 <div class="tip" id="tip" role="tooltip"></div>
 
 <script>
-const D = {"points": [{"p": "กรุงเทพมหานคร", "x": 0.9, "y": 5.6, "tier": "primary", "st": 0, "c": "C1", "fo": 68.2, "los": 2.47, "sea": 0.061, "gu": 33568059, "occ": 76.57, "g1": 8.3, "g2": -3.2, "an": true}, {"p": "สมุทรปราการ", "x": 7.8, "y": 23.5, "tier": "primary", "st": 6, "c": "C1", "fo": 44.8, "los": 1.87, "sea": 0.051, "gu": 1443549, "occ": 56.82, "g1": 9.7, "g2": 5.2, "an": false}, {"p": "นนทบุรี", "x": 10.1, "y": 17.5, "tier": "primary", "st": 6, "c": "C4", "fo": 8.7, "los": 1.78, "sea": 0.051, "gu": 1269115, "occ": 60.09, "g1": 4.2, "g2": 2.8, "an": false}, {"p": "ปทุมธานี", "x": -9.0, "y": 16.8, "tier": "primary", "st": 6, "c": "C4", "fo": 9.1, "los": 1.79, "sea": 0.076, "gu": 886862, "occ": 56.08, "g1": 20.8, "g2": 4.0, "an": false}, {"p": "พระนครศรีอยุธยา", "x": 0.6, "y": 5.7, "tier": "primary", "st": 0, "c": "C4", "fo": 18.8, "los": 1.77, "sea": 0.073, "gu": 1053326, "occ": 59.42, "g1": 7.8, "g2": -2.9, "an": false}, {"p": "อ่างทอง", "x": 26.5, "y": 10.3, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.7, "los": 1.52, "sea": 0.049, "gu": 162868, "occ": 53.82, "g1": -8.4, "g2": -6.5, "an": false}, {"p": "ลพบุรี", "x": -1.8, "y": 6.8, "tier": "secondary", "st": 3, "c": "C3", "fo": 0.9, "los": 1.48, "sea": 0.079, "gu": 819818, "occ": 58.21, "g1": 3.0, "g2": 5.4, "an": false}, {"p": "สิงห์บุรี", "x": -19.7, "y": -0.5, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.5, "los": 1.48, "sea": 0.073, "gu": 197859, "occ": 56.21, "g1": 18.6, "g2": 3.0, "an": false}, {"p": "ชัยนาท", "x": -8.7, "y": 11.7, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.6, "los": 1.58, "sea": 0.065, "gu": 268168, "occ": 51.87, "g1": 9.0, "g2": 11.1, "an": false}, {"p": "สระบุรี", "x": -13.3, "y": -2.6, "tier": "primary", "st": 0, "c": "C3", "fo": 1.7, "los": 1.47, "sea": 0.071, "gu": 964321, "occ": 62.3, "g1": 8.4, "g2": 2.6, "an": false}, {"p": "ชลบุรี", "x": 8.6, "y": 19.7, "tier": "primary", "st": 0, "c": "C1", "fo": 51.4, "los": 2.33, "sea": 0.068, "gu": 19045418, "occ": 78.72, "g1": 11.7, "g2": -0.5, "an": true}, {"p": "ระยอง", "x": 6.1, "y": 18.8, "tier": "primary", "st": 0, "c": "C1", "fo": 16.8, "los": 1.96, "sea": 0.08, "gu": 3800084, "occ": 75.42, "g1": 9.8, "g2": 2.5, "an": true}, {"p": "จันทบุรี", "x": 24.6, "y": 19.5, "tier": "secondary", "st": 0, "c": "C4", "fo": 1.0, "los": 2.02, "sea": 0.132, "gu": 1527142, "occ": 61.6, "g1": -14.1, "g2": 8.0, "an": false}, {"p": "ตราด", "x": 8.2, "y": 17.0, "tier": "secondary", "st": 0, "c": "C2", "fo": 18.0, "los": 2.19, "sea": 0.155, "gu": 1888134, "occ": 51.07, "g1": 9.5, "g2": -0.8, "an": false}, {"p": "ฉะเชิงเทรา", "x": 17.2, "y": 13.1, "tier": "primary", "st": 0, "c": "C4", "fo": 2.9, "los": 1.62, "sea": 0.1, "gu": 420679, "occ": 46.61, "g1": -6.5, "g2": 2.2, "an": false}, {"p": "ปราจีนบุรี", "x": 9.2, "y": 14.2, "tier": "secondary", "st": 0, "c": "C4", "fo": 2.0, "los": 1.78, "sea": 0.061, "gu": 845647, "occ": 52.36, "g1": 1.5, "g2": 3.1, "an": false}, {"p": "นครนายก", "x": 3.5, "y": 10.2, "tier": "secondary", "st": 0, "c": "C4", "fo": 1.1, "los": 2.0, "sea": 0.106, "gu": 1339169, "occ": 64.48, "g1": 5.1, "g2": 1.4, "an": false}, {"p": "สระแก้ว", "x": -11.6, "y": -12.3, "tier": "secondary", "st": 0, "c": "C2", "fo": 3.1, "los": 1.65, "sea": 0.125, "gu": 450210, "occ": 42.29, "g1": 14.3, "g2": -14.5, "an": false}, {"p": "นครราชสีมา", "x": 3.4, "y": 17.1, "tier": "primary", "st": 0, "c": "C4", "fo": 2.5, "los": 1.91, "sea": 0.083, "gu": 5672553, "occ": 76.28, "g1": -0.6, "g2": 13.1, "an": true}, {"p": "บุรีรัมย์", "x": 22.2, "y": 10.3, "tier": "secondary", "st": 0, "c": "C3", "fo": 1.8, "los": 1.73, "sea": 0.108, "gu": 1848756, "occ": 75.27, "g1": -11.4, "g2": -0.6, "an": false}, {"p": "สุรินทร์", "x": 0.7, "y": 13.7, "tier": "secondary", "st": 0, "c": "C3", "fo": 1.7, "los": 1.54, "sea": 0.099, "gu": 902912, "occ": 55.98, "g1": 11.6, "g2": 1.1, "an": false}, {"p": "ศรีสะเกษ", "x": -2.5, "y": 6.4, "tier": "secondary", "st": 0, "c": "C4", "fo": 0.7, "los": 1.54, "sea": 0.072, "gu": 357089, "occ": 50.37, "g1": 10.7, "g2": -1.7, "an": false}, {"p": "อุบลราชธานี", "x": 8.4, "y": 9.5, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.8, "los": 1.51, "sea": 0.087, "gu": 1176731, "occ": 54.19, "g1": 7.1, "g2": -5.3, "an": false}, {"p": "ยโสธร", "x": 27.6, "y": 18.6, "tier": "secondary", "st": 0, "c": "C4", "fo": 0.5, "los": 1.63, "sea": 0.104, "gu": 155745, "occ": 48.87, "g1": -12.6, "g2": 3.2, "an": false}, {"p": "ชัยภูมิ", "x": -0.2, "y": 18.9, "tier": "secondary", "st": 6, "c": "C3", "fo": 0.5, "los": 1.59, "sea": 0.101, "gu": 943495, "occ": 67.88, "g1": 16.2, "g2": 2.5, "an": false}, {"p": "อำนาจเจริญ", "x": -8.6, "y": 11.5, "tier": "secondary", "st": 0, "c": "C4", "fo": 1.0, "los": 1.27, "sea": 0.107, "gu": 81992, "occ": 40.61, "g1": 17.7, "g2": 2.2, "an": false}, {"p": "บึงกาฬ", "x": 3.8, "y": 6.6, "tier": "secondary", "st": 2, "c": "C4", "fo": 2.1, "los": 1.56, "sea": 0.07, "gu": 432925, "occ": 56.36, "g1": 2.4, "g2": 0.3, "an": false}, {"p": "หนองบัวลำภู", "x": 6.2, "y": 13.4, "tier": "secondary", "st": 0, "c": "C4", "fo": 0.7, "los": 1.68, "sea": 0.105, "gu": 125842, "occ": 46.76, "g1": -1.9, "g2": 8.7, "an": false}, {"p": "ขอนแก่น", "x": 1.9, "y": 14.9, "tier": "primary", "st": 6, "c": "C4", "fo": 1.4, "los": 1.92, "sea": 0.077, "gu": 2383341, "occ": 66.46, "g1": 6.3, "g2": 6.2, "an": true}, {"p": "อุดรธานี", "x": 2.3, "y": 7.3, "tier": "secondary", "st": 3, "c": "C4", "fo": 5.2, "los": 1.93, "sea": 0.047, "gu": 1986887, "occ": 69.02, "g1": -0.2, "g2": 5.2, "an": false}, {"p": "เลย", "x": 2.9, "y": 7.9, "tier": "secondary", "st": 3, "c": "C4", "fo": 1.2, "los": 2.0, "sea": 0.11, "gu": 1505424, "occ": 67.91, "g1": -0.0, "g2": 5.0, "an": false}, {"p": "หนองคาย", "x": 1.5, "y": 16.1, "tier": "secondary", "st": 6, "c": "C4", "fo": 5.6, "los": 1.65, "sea": 0.068, "gu": 1226784, "occ": 68.98, "g1": 6.6, "g2": 7.4, "an": false}, {"p": "มหาสารคาม", "x": 5.3, "y": 7.6, "tier": "secondary", "st": 0, "c": "C4", "fo": 1.7, "los": 1.92, "sea": 0.086, "gu": 360693, "occ": 54.46, "g1": -4.5, "g2": 6.8, "an": false}, {"p": "ร้อยเอ็ด", "x": 1.4, "y": 9.3, "tier": "secondary", "st": 0, "c": "C4", "fo": 1.2, "los": 1.77, "sea": 0.094, "gu": 423793, "occ": 53.8, "g1": -5.7, "g2": 12.5, "an": false}, {"p": "กาฬสินธุ์", "x": 7.2, "y": 7.7, "tier": "secondary", "st": 1, "c": "C4", "fo": 2.1, "los": 1.79, "sea": 0.09, "gu": 318052, "occ": 55.42, "g1": -2.3, "g2": 2.7, "an": false}, {"p": "สกลนคร", "x": 8.0, "y": 19.0, "tier": "secondary", "st": 4, "c": "C4", "fo": 1.0, "los": 1.88, "sea": 0.104, "gu": 766672, "occ": 55.88, "g1": 7.6, "g2": 2.8, "an": false}, {"p": "นครพนม", "x": 25.6, "y": 6.4, "tier": "secondary", "st": 0, "c": "C4", "fo": 3.4, "los": 1.95, "sea": 0.055, "gu": 863257, "occ": 76.45, "g1": -23.3, "g2": 4.5, "an": false}, {"p": "มุกดาหาร", "x": 1.8, "y": 7.6, "tier": "secondary", "st": 0, "c": "C4", "fo": 1.9, "los": 1.91, "sea": 0.108, "gu": 477915, "occ": 47.82, "g1": 3.1, "g2": 2.6, "an": false}, {"p": "เชียงใหม่", "x": 2.7, "y": 7.7, "tier": "primary", "st": 6, "c": "C2", "fo": 35.0, "los": 2.54, "sea": 0.142, "gu": 8316537, "occ": 76.05, "g1": 0.5, "g2": 4.5, "an": true}, {"p": "ลำพูน", "x": 4.4, "y": 14.4, "tier": "secondary", "st": 2, "c": "C2", "fo": 5.4, "los": 1.69, "sea": 0.164, "gu": 369205, "occ": 55.21, "g1": 0.9, "g2": 8.6, "an": false}, {"p": "ลำปาง", "x": 7.2, "y": 12.6, "tier": "secondary", "st": 6, "c": "C2", "fo": 4.9, "los": 1.79, "sea": 0.195, "gu": 868356, "occ": 58.89, "g1": 1.4, "g2": 3.8, "an": false}, {"p": "อุตรดิตถ์", "x": 2.1, "y": 13.5, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.4, "los": 1.47, "sea": 0.076, "gu": 629095, "occ": 51.89, "g1": 6.9, "g2": 4.0, "an": false}, {"p": "แพร่", "x": 7.9, "y": 6.6, "tier": "secondary", "st": 0, "c": "C3", "fo": 1.2, "los": 1.63, "sea": 0.088, "gu": 606519, "occ": 65.28, "g1": -3.2, "g2": 1.9, "an": false}, {"p": "น่าน", "x": 21.7, "y": 10.1, "tier": "secondary", "st": 0, "c": "C2", "fo": 1.8, "los": 1.76, "sea": 0.134, "gu": 1200455, "occ": 69.77, "g1": -8.6, "g2": -2.2, "an": false}, {"p": "พะเยา", "x": 13.3, "y": 17.3, "tier": "secondary", "st": 0, "c": "C2", "fo": 2.3, "los": 1.73, "sea": 0.131, "gu": 593477, "occ": 67.17, "g1": -4.0, "g2": 8.0, "an": false}, {"p": "เชียงราย", "x": -3.7, "y": 3.6, "tier": "secondary", "st": 0, "c": "C2", "fo": 8.1, "los": 1.83, "sea": 0.155, "gu": 4681916, "occ": 72.34, "g1": 3.5, "g2": 3.8, "an": false}, {"p": "แม่ฮ่องสอน", "x": 0.6, "y": 11.3, "tier": "secondary", "st": 6, "c": "C2", "fo": 20.0, "los": 1.93, "sea": 0.164, "gu": 1248994, "occ": 56.4, "g1": 8.3, "g2": 2.3, "an": false}, {"p": "นครสวรรค์", "x": 13.1, "y": 9.6, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.6, "los": 1.67, "sea": 0.081, "gu": 1119420, "occ": 53.6, "g1": -0.5, "g2": -2.8, "an": false}, {"p": "อุทัยธานี", "x": 5.6, "y": 10.9, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.3, "los": 1.71, "sea": 0.065, "gu": 396729, "occ": 52.25, "g1": 2.8, "g2": 2.2, "an": false}, {"p": "กำแพงเพชร", "x": 11.9, "y": 15.6, "tier": "secondary", "st": 0, "c": "C3", "fo": 1.4, "los": 1.67, "sea": 0.077, "gu": 446716, "occ": 41.44, "g1": 6.8, "g2": -4.1, "an": false}, {"p": "ตาก", "x": -13.4, "y": -1.6, "tier": "secondary", "st": 0, "c": "C3", "fo": 1.2, "los": 1.57, "sea": 0.088, "gu": 1600639, "occ": 66.99, "g1": 12.6, "g2": -0.9, "an": false}, {"p": "สุโขทัย", "x": -3.7, "y": 18.5, "tier": "secondary", "st": 0, "c": "C2", "fo": 16.8, "los": 1.54, "sea": 0.138, "gu": 703355, "occ": 43.62, "g1": 11.6, "g2": 9.7, "an": false}, {"p": "พิษณุโลก", "x": 4.7, "y": 14.8, "tier": "secondary", "st": 0, "c": "C3", "fo": 6.6, "los": 1.51, "sea": 0.089, "gu": 1813656, "occ": 53.65, "g1": 2.6, "g2": 7.0, "an": false}, {"p": "พิจิตร", "x": -0.9, "y": 4.0, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.3, "los": 1.43, "sea": 0.06, "gu": 362967, "occ": 51.7, "g1": 8.2, "g2": -3.6, "an": false}, {"p": "เพชรบูรณ์", "x": 1.9, "y": 2.9, "tier": "secondary", "st": 0, "c": "C2", "fo": 0.5, "los": 1.49, "sea": 0.185, "gu": 2280529, "occ": 51.68, "g1": -1.6, "g2": 2.6, "an": false}, {"p": "ราชบุรี", "x": -6.4, "y": 15.3, "tier": "secondary", "st": 3, "c": "C4", "fo": 2.8, "los": 1.77, "sea": 0.079, "gu": 1180910, "occ": 61.53, "g1": 20.1, "g2": 1.2, "an": false}, {"p": "กาญจนบุรี", "x": -9.2, "y": 10.2, "tier": "primary", "st": 3, "c": "C4", "fo": 4.3, "los": 1.72, "sea": 0.057, "gu": 3768175, "occ": 69.11, "g1": 12.0, "g2": 7.4, "an": true}, {"p": "สุพรรณบุรี", "x": -13.5, "y": -1.5, "tier": "secondary", "st": 0, "c": "C2", "fo": 2.1, "los": 1.62, "sea": 0.132, "gu": 968332, "occ": 60.27, "g1": 15.3, "g2": -4.2, "an": false}, {"p": "นครปฐม", "x": -13.1, "y": 9.4, "tier": "primary", "st": 0, "c": "C3", "fo": 3.3, "los": 1.57, "sea": 0.085, "gu": 1004391, "occ": 58.13, "g1": 19.7, "g2": 2.6, "an": false}, {"p": "สมุทรสาคร", "x": -19.2, "y": -5.9, "tier": "primary", "st": 0, "c": "C3", "fo": 0.7, "los": 1.45, "sea": 0.063, "gu": 326872, "occ": 49.83, "g1": 8.2, "g2": 6.1, "an": false}, {"p": "สมุทรสงคราม", "x": -15.0, "y": -3.8, "tier": "secondary", "st": 0, "c": "C3", "fo": 4.1, "los": 1.47, "sea": 0.055, "gu": 745327, "occ": 59.72, "g1": 8.8, "g2": 3.0, "an": false}, {"p": "เพชรบุรี", "x": -9.2, "y": -3.6, "tier": "primary", "st": 0, "c": "C4", "fo": 5.5, "los": 1.52, "sea": 0.093, "gu": 3813502, "occ": 70.06, "g1": 3.6, "g2": 2.1, "an": true}, {"p": "ประจวบคีรีขันธ์", "x": 12.7, "y": 6.6, "tier": "primary", "st": 0, "c": "C4", "fo": 9.5, "los": 1.65, "sea": 0.085, "gu": 6017100, "occ": 72.8, "g1": -11.6, "g2": 5.1, "an": true}, {"p": "นครศรีธรรมราช", "x": 15.7, "y": 14.8, "tier": "secondary", "st": 3, "c": "C4", "fo": 1.3, "los": 1.91, "sea": 0.068, "gu": 2579467, "occ": 71.59, "g1": -5.3, "g2": 4.1, "an": false}, {"p": "กระบี่", "x": 21.3, "y": 33.2, "tier": "primary", "st": 6, "c": "C1", "fo": 51.3, "los": 2.96, "sea": 0.106, "gu": 4279800, "occ": 70.68, "g1": 5.8, "g2": 4.8, "an": true}, {"p": "พังงา", "x": 1.8, "y": 36.7, "tier": "primary", "st": 6, "c": "C1", "fo": 54.1, "los": 4.04, "sea": 0.102, "gu": 1639528, "occ": 76.37, "g1": 25.2, "g2": 7.8, "an": false}, {"p": "ภูเก็ต", "x": 6.9, "y": 18.0, "tier": "primary", "st": 0, "c": "C1", "fo": 79.7, "los": 4.03, "sea": 0.067, "gu": 12657079, "occ": 76.35, "g1": 15.0, "g2": -3.5, "an": true}, {"p": "สุราษฎร์ธานี", "x": 7.6, "y": 21.5, "tier": "primary", "st": 3, "c": "C1", "fo": 52.9, "los": 3.63, "sea": 0.073, "gu": 6734559, "occ": 77.56, "g1": 11.9, "g2": 1.7, "an": true}, {"p": "ระนอง", "x": 12.7, "y": 36.8, "tier": "secondary", "st": 6, "c": "C4", "fo": 3.3, "los": 1.88, "sea": 0.079, "gu": 797713, "occ": 60.84, "g1": 10.2, "g2": 11.3, "an": false}, {"p": "ชุมพร", "x": 15.7, "y": 25.0, "tier": "secondary", "st": 3, "c": "C4", "fo": 2.9, "los": 1.81, "sea": 0.048, "gu": 1420643, "occ": 64.32, "g1": -0.3, "g2": 8.3, "an": false}, {"p": "สงขลา", "x": 3.7, "y": 13.0, "tier": "primary", "st": 0, "c": "C1", "fo": 44.4, "los": 2.34, "sea": 0.098, "gu": 4174333, "occ": 69.42, "g1": 11.2, "g2": -1.3, "an": true}, {"p": "สตูล", "x": 17.1, "y": 10.5, "tier": "secondary", "st": 0, "c": "C4", "fo": 24.3, "los": 1.87, "sea": 0.086, "gu": 1161839, "occ": 68.53, "g1": -5.1, "g2": -1.3, "an": false}, {"p": "ตรัง", "x": 3.9, "y": 14.2, "tier": "secondary", "st": 0, "c": "C2", "fo": 6.4, "los": 1.8, "sea": 0.154, "gu": 946181, "occ": 58.48, "g1": 8.9, "g2": 1.2, "an": false}, {"p": "พัทลุง", "x": 25.9, "y": 35.5, "tier": "secondary", "st": 4, "c": "C4", "fo": 2.7, "los": 1.92, "sea": 0.069, "gu": 736859, "occ": 65.88, "g1": 2.9, "g2": 5.2, "an": false}, {"p": "ปัตตานี", "x": 13.5, "y": 30.9, "tier": "secondary", "st": 2, "c": "C2", "fo": 17.6, "los": 1.74, "sea": 0.106, "gu": 316877, "occ": 59.8, "g1": 10.3, "g2": 5.7, "an": false}, {"p": "ยะลา", "x": 9.4, "y": 18.1, "tier": "secondary", "st": 6, "c": "C2", "fo": 46.7, "los": 1.65, "sea": 0.112, "gu": 1206668, "occ": 80.93, "g1": 3.2, "g2": 4.9, "an": false}, {"p": "นราธิวาส", "x": 20.8, "y": 42.6, "tier": "secondary", "st": 2, "c": "C2", "fo": 44.3, "los": 1.74, "sea": 0.09, "gu": 634193, "occ": 65.99, "g1": 21.2, "g2": -0.2, "an": false}], "funnel": [77, 34, 27, 24, 19], "six": ["ชัยภูมิ", "ยะลา", "ระนอง", "ลำปาง", "หนองคาย", "แม่ฮ่องสอน"], "nat": {"years": [2556, 2557, 2558, 2559, 2560, 2561, 2562, 2563, 2564, 2565, 2566, 2567, 2568], "guests": [69.9, 72.2, 81.2, 86.8, 94.2, 98.5, 100.0, 43.4, 20.5, 60.9, 91.9, 102.4, 103.5], "rooms": [69.1, 70.6, 83.9, 88.1, 94.8, 95.2, 100.0, 101.9, 98.9, 100.9, 102.9, 107.8, 107.8], "n": 75}, "clusters": {"C1": {"n": 9, "fo": 51.4, "los": 2.47, "sea": 0.073, "gu": 4279800, "ppr": 1.7, "members": ["กรุงเทพมหานคร", "ชลบุรี", "ภูเก็ต", "สุราษฎร์ธานี", "กระบี่", "สงขลา", "ระยอง", "พังงา", "สมุทรปราการ"]}, "C2": {"n": 16, "fo": 7.3, "los": 1.74, "sea": 0.14, "gu": 957256, "ppr": 1.9, "members": ["เชียงใหม่", "เชียงราย", "เพชรบูรณ์", "ตราด", "แม่ฮ่องสอน", "ยะลา", "น่าน", "สุพรรณบุรี", "ตรัง", "ลำปาง", "สุโขทัย", "นราธิวาส", "พะเยา", "สระแก้ว", "ลำพูน", "ปัตตานี"]}, "C3": {"n": 20, "fo": 0.9, "los": 1.53, "sea": 0.078, "gu": 782572, "ppr": 1.94, "members": ["บุรีรัมย์", "พิษณุโลก", "ตาก", "อุบลราชธานี", "นครสวรรค์", "นครปฐม", "สระบุรี", "ชัยภูมิ", "สุรินทร์", "ลพบุรี", "สมุทรสงคราม", "อุตรดิตถ์", "แพร่", "กำแพงเพชร", "อุทัยธานี", "พิจิตร", "สมุทรสาคร", "ชัยนาท", "สิงห์บุรี", "อ่างทอง"]}, "C4": {"n": 32, "fo": 2.3, "los": 1.79, "sea": 0.081, "gu": 970094, "ppr": 1.77, "members": ["ประจวบคีรีขันธ์", "นครราชสีมา", "เพชรบุรี", "กาญจนบุรี", "นครศรีธรรมราช", "ขอนแก่น", "อุดรธานี", "จันทบุรี", "เลย", "ชุมพร", "นครนายก", "นนทบุรี", "หนองคาย", "ราชบุรี", "สตูล", "พระนครศรีอยุธยา", "ปทุมธานี", "นครพนม", "ปราจีนบุรี", "ระนอง", "สกลนคร", "พัทลุง", "มุกดาหาร", "บึงกาฬ", "ร้อยเอ็ด", "ฉะเชิงเทรา", "มหาสารคาม", "ศรีสะเกษ", "กาฬสินธุ์", "ยโสธร", "หนองบัวลำภู", "อำนาจเจริญ"]}}, "pairs": [{"t": "ระนอง", "a": "ประจวบคีรีขันธ์", "c": "C4", "sim": 0.74, "conf": "low", "nt": 4, "nl": 26, "rows": [{"k": "พูลวิลล่า/ส่วนตัว", "t": 3.9, "a": 4.5, "gap": 0.7}, {"k": "ริมทะเล", "t": 0.0, "a": 22.7, "gap": 22.7}, {"k": "ธรรมชาติ/วิว", "t": 3.9, "a": 4.5, "gap": 0.7}, {"k": "แคมป์/แกลมปิ้ง", "t": 0.0, "a": 0.0, "gap": 0.0}, {"k": "โฮมสเตย์/ชุมชน", "t": 0.0, "a": 6.8, "gap": 6.8}, {"k": "บูทีค/ดีไซน์", "t": 0.0, "a": 11.4, "gap": 11.4}, {"k": "สปา/สุขภาพ", "t": 3.9, "a": 2.3, "gap": -1.6}, {"k": "โฮสเทล/ประหยัด", "t": 7.7, "a": 4.5, "gap": -3.1}, {"k": "ธุรกิจ/ในเมือง", "t": 0.0, "a": 0.0, "gap": 0.0}]}, {"t": "ลำปาง", "a": "เชียงใหม่", "c": "C2", "sim": 0.71, "conf": "ok", "nt": 15, "nl": 33, "rows": [{"k": "พูลวิลล่า/ส่วนตัว", "t": 0.0, "a": 4.4, "gap": 4.4}, {"k": "ธรรมชาติ/วิว", "t": 15.2, "a": 19.5, "gap": 4.3}, {"k": "แคมป์/แกลมปิ้ง", "t": 0.0, "a": 0.9, "gap": 0.9}, {"k": "โฮมสเตย์/ชุมชน", "t": 9.1, "a": 1.8, "gap": -7.3}, {"k": "บูทีค/ดีไซน์", "t": 9.1, "a": 9.7, "gap": 0.6}, {"k": "สปา/สุขภาพ", "t": 0.0, "a": 11.5, "gap": 11.5}, {"k": "โฮสเทล/ประหยัด", "t": 9.1, "a": 4.4, "gap": -4.7}, {"k": "ธุรกิจ/ในเมือง", "t": 15.2, "a": 13.3, "gap": -1.9}]}, {"t": "หนองคาย", "a": "กาญจนบุรี", "c": "C4", "sim": 0.64, "conf": "ok", "nt": 37, "nl": 118, "rows": [{"k": "พูลวิลล่า/ส่วนตัว", "t": 2.5, "a": 9.8, "gap": 7.3}, {"k": "ธรรมชาติ/วิว", "t": 16.1, "a": 53.6, "gap": 37.5}, {"k": "แคมป์/แกลมปิ้ง", "t": 2.5, "a": 8.0, "gap": 5.5}, {"k": "โฮมสเตย์/ชุมชน", "t": 5.1, "a": 2.7, "gap": -2.4}, {"k": "บูทีค/ดีไซน์", "t": 1.7, "a": 14.3, "gap": 12.6}, {"k": "สปา/สุขภาพ", "t": 5.9, "a": 3.6, "gap": -2.4}, {"k": "โฮสเทล/ประหยัด", "t": 0.8, "a": 0.9, "gap": 0.1}, {"k": "ธุรกิจ/ในเมือง", "t": 9.3, "a": 6.2, "gap": -3.1}]}, {"t": "ยะลา", "a": "เชียงใหม่", "c": "C2", "sim": 0.53, "conf": "low", "nt": 8, "nl": 17, "rows": [{"k": "พูลวิลล่า/ส่วนตัว", "t": 0.0, "a": 4.4, "gap": 4.4}, {"k": "ธรรมชาติ/วิว", "t": 5.9, "a": 19.5, "gap": 13.6}, {"k": "แคมป์/แกลมปิ้ง", "t": 0.0, "a": 0.9, "gap": 0.9}, {"k": "โฮมสเตย์/ชุมชน", "t": 0.0, "a": 1.8, "gap": 1.8}, {"k": "บูทีค/ดีไซน์", "t": 0.0, "a": 9.7, "gap": 9.7}, {"k": "สปา/สุขภาพ", "t": 5.9, "a": 11.5, "gap": 5.6}, {"k": "โฮสเทล/ประหยัด", "t": 11.8, "a": 4.4, "gap": -7.3}, {"k": "ธุรกิจ/ในเมือง", "t": 29.4, "a": 13.3, "gap": -16.1}]}, {"t": "แม่ฮ่องสอน", "a": "เชียงใหม่", "c": "C2", "sim": 0.46, "conf": "ok", "nt": 10, "nl": 25, "rows": [{"k": "พูลวิลล่า/ส่วนตัว", "t": 0.0, "a": 4.4, "gap": 4.4}, {"k": "ธรรมชาติ/วิว", "t": 12.0, "a": 19.5, "gap": 7.5}, {"k": "แคมป์/แกลมปิ้ง", "t": 0.0, "a": 0.9, "gap": 0.9}, {"k": "โฮมสเตย์/ชุมชน", "t": 12.0, "a": 1.8, "gap": -10.2}, {"k": "บูทีค/ดีไซน์", "t": 4.0, "a": 9.7, "gap": 5.7}, {"k": "สปา/สุขภาพ", "t": 4.0, "a": 11.5, "gap": 7.5}, {"k": "โฮสเทล/ประหยัด", "t": 0.0, "a": 4.4, "gap": 4.4}, {"k": "ธุรกิจ/ในเมือง", "t": 20.0, "a": 13.3, "gap": -6.7}]}], "sil": {"2": 0.434, "3": 0.296, "4": 0.265, "5": 0.264, "6": 0.272, "7": 0.251, "8": 0.227}, "occ_cut": 53.8, "size_cut": 477915};
+const D = {"points": [{"p": "กรุงเทพมหานคร", "x": 0.9, "y": 5.6, "tier": "primary", "st": 0, "c": "C1", "fo": 68.2, "los": 2.47, "sea": 0.061, "gu": 33568059, "occ": 76.57, "g1": 8.3, "g2": -3.2, "an": true, "gs": 0}, {"p": "สมุทรปราการ", "x": 7.8, "y": 23.5, "tier": "primary", "st": 6, "c": "C1", "fo": 44.8, "los": 1.87, "sea": 0.051, "gu": 1443549, "occ": 56.82, "g1": 9.7, "g2": 5.2, "an": false, "gs": 4}, {"p": "นนทบุรี", "x": 10.1, "y": 17.5, "tier": "primary", "st": 6, "c": "C4", "fo": 8.7, "los": 1.78, "sea": 0.051, "gu": 1269115, "occ": 60.09, "g1": 4.2, "g2": 2.8, "an": false, "gs": 4}, {"p": "ปทุมธานี", "x": -9.0, "y": 16.8, "tier": "primary", "st": 6, "c": "C4", "fo": 9.1, "los": 1.79, "sea": 0.076, "gu": 886862, "occ": 56.08, "g1": 20.8, "g2": 4.0, "an": false, "gs": 4}, {"p": "พระนครศรีอยุธยา", "x": 0.6, "y": 5.7, "tier": "primary", "st": 0, "c": "C4", "fo": 18.8, "los": 1.77, "sea": 0.073, "gu": 1053326, "occ": 59.42, "g1": 7.8, "g2": -2.9, "an": false, "gs": 0}, {"p": "อ่างทอง", "x": 26.5, "y": 10.3, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.7, "los": 1.52, "sea": 0.049, "gu": 162868, "occ": 53.82, "g1": -8.4, "g2": -6.5, "an": false, "gs": 0}, {"p": "ลพบุรี", "x": -1.8, "y": 6.8, "tier": "secondary", "st": 3, "c": "C3", "fo": 0.9, "los": 1.48, "sea": 0.079, "gu": 819818, "occ": 58.21, "g1": 3.0, "g2": 5.4, "an": false, "gs": 4}, {"p": "สิงห์บุรี", "x": -19.7, "y": -0.5, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.5, "los": 1.48, "sea": 0.073, "gu": 197859, "occ": 56.21, "g1": 18.6, "g2": 3.0, "an": false, "gs": 0}, {"p": "ชัยนาท", "x": -8.7, "y": 11.7, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.6, "los": 1.58, "sea": 0.065, "gu": 268168, "occ": 51.87, "g1": 9.0, "g2": 11.1, "an": false, "gs": 0}, {"p": "สระบุรี", "x": -13.3, "y": -2.6, "tier": "primary", "st": 0, "c": "C3", "fo": 1.7, "los": 1.47, "sea": 0.071, "gu": 964321, "occ": 62.3, "g1": 8.4, "g2": 2.6, "an": false, "gs": 0}, {"p": "ชลบุรี", "x": 8.6, "y": 19.7, "tier": "primary", "st": 0, "c": "C1", "fo": 51.4, "los": 2.33, "sea": 0.068, "gu": 19045418, "occ": 78.72, "g1": 11.7, "g2": -0.5, "an": true, "gs": 0}, {"p": "ระยอง", "x": 6.1, "y": 18.8, "tier": "primary", "st": 0, "c": "C1", "fo": 16.8, "los": 1.96, "sea": 0.08, "gu": 3800084, "occ": 75.42, "g1": 9.8, "g2": 2.5, "an": true, "gs": 3}, {"p": "จันทบุรี", "x": 24.6, "y": 19.5, "tier": "secondary", "st": 0, "c": "C4", "fo": 1.0, "los": 2.02, "sea": 0.132, "gu": 1527142, "occ": 61.6, "g1": -14.1, "g2": 8.0, "an": false, "gs": 0}, {"p": "ตราด", "x": 8.2, "y": 17.0, "tier": "secondary", "st": 0, "c": "C2", "fo": 18.0, "los": 2.19, "sea": 0.155, "gu": 1888134, "occ": 51.07, "g1": 9.5, "g2": -0.8, "an": false, "gs": 0}, {"p": "ฉะเชิงเทรา", "x": 17.2, "y": 13.1, "tier": "primary", "st": 0, "c": "C4", "fo": 2.9, "los": 1.62, "sea": 0.1, "gu": 420679, "occ": 46.61, "g1": -6.5, "g2": 2.2, "an": false, "gs": 0}, {"p": "ปราจีนบุรี", "x": 9.2, "y": 14.2, "tier": "secondary", "st": 0, "c": "C4", "fo": 2.0, "los": 1.78, "sea": 0.061, "gu": 845647, "occ": 52.36, "g1": 1.5, "g2": 3.1, "an": false, "gs": 1}, {"p": "นครนายก", "x": 3.5, "y": 10.2, "tier": "secondary", "st": 0, "c": "C4", "fo": 1.1, "los": 2.0, "sea": 0.106, "gu": 1339169, "occ": 64.48, "g1": 5.1, "g2": 1.4, "an": false, "gs": 3}, {"p": "สระแก้ว", "x": -11.6, "y": -12.3, "tier": "secondary", "st": 0, "c": "C2", "fo": 3.1, "los": 1.65, "sea": 0.125, "gu": 450210, "occ": 42.29, "g1": 14.3, "g2": -14.5, "an": false, "gs": 0}, {"p": "นครราชสีมา", "x": 3.4, "y": 17.1, "tier": "primary", "st": 0, "c": "C4", "fo": 2.5, "los": 1.91, "sea": 0.083, "gu": 5672553, "occ": 76.28, "g1": -0.6, "g2": 13.1, "an": true, "gs": 0}, {"p": "บุรีรัมย์", "x": 22.2, "y": 10.3, "tier": "secondary", "st": 0, "c": "C3", "fo": 1.8, "los": 1.73, "sea": 0.108, "gu": 1848756, "occ": 75.27, "g1": -11.4, "g2": -0.6, "an": false, "gs": 0}, {"p": "สุรินทร์", "x": 0.7, "y": 13.7, "tier": "secondary", "st": 0, "c": "C3", "fo": 1.7, "los": 1.54, "sea": 0.099, "gu": 902912, "occ": 55.98, "g1": 11.6, "g2": 1.1, "an": false, "gs": 3}, {"p": "ศรีสะเกษ", "x": -2.5, "y": 6.4, "tier": "secondary", "st": 0, "c": "C4", "fo": 0.7, "los": 1.54, "sea": 0.072, "gu": 357089, "occ": 50.37, "g1": 10.7, "g2": -1.7, "an": false, "gs": 0}, {"p": "อุบลราชธานี", "x": 8.4, "y": 9.5, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.8, "los": 1.51, "sea": 0.087, "gu": 1176731, "occ": 54.19, "g1": 7.1, "g2": -5.3, "an": false, "gs": 0}, {"p": "ยโสธร", "x": 27.6, "y": 18.6, "tier": "secondary", "st": 0, "c": "C4", "fo": 0.5, "los": 1.63, "sea": 0.104, "gu": 155745, "occ": 48.87, "g1": -12.6, "g2": 3.2, "an": false, "gs": 0}, {"p": "ชัยภูมิ", "x": -0.2, "y": 18.9, "tier": "secondary", "st": 6, "c": "C3", "fo": 0.5, "los": 1.59, "sea": 0.101, "gu": 943495, "occ": 67.88, "g1": 16.2, "g2": 2.5, "an": false, "gs": 4}, {"p": "อำนาจเจริญ", "x": -8.6, "y": 11.5, "tier": "secondary", "st": 0, "c": "C4", "fo": 1.0, "los": 1.27, "sea": 0.107, "gu": 81992, "occ": 40.61, "g1": 17.7, "g2": 2.2, "an": false, "gs": 1}, {"p": "บึงกาฬ", "x": 3.8, "y": 6.6, "tier": "secondary", "st": 2, "c": "C4", "fo": 2.1, "los": 1.56, "sea": 0.07, "gu": 432925, "occ": 56.36, "g1": 2.4, "g2": 0.3, "an": false, "gs": 2}, {"p": "หนองบัวลำภู", "x": 6.2, "y": 13.4, "tier": "secondary", "st": 0, "c": "C4", "fo": 0.7, "los": 1.68, "sea": 0.105, "gu": 125842, "occ": 46.76, "g1": -1.9, "g2": 8.7, "an": false, "gs": 0}, {"p": "ขอนแก่น", "x": 1.9, "y": 14.9, "tier": "primary", "st": 6, "c": "C4", "fo": 1.4, "los": 1.92, "sea": 0.077, "gu": 2383341, "occ": 66.46, "g1": 6.3, "g2": 6.2, "an": true, "gs": 4}, {"p": "อุดรธานี", "x": 2.3, "y": 7.3, "tier": "secondary", "st": 3, "c": "C4", "fo": 5.2, "los": 1.93, "sea": 0.047, "gu": 1986887, "occ": 69.02, "g1": -0.2, "g2": 5.2, "an": false, "gs": 0}, {"p": "เลย", "x": 2.9, "y": 7.9, "tier": "secondary", "st": 3, "c": "C4", "fo": 1.2, "los": 2.0, "sea": 0.11, "gu": 1505424, "occ": 67.91, "g1": -0.0, "g2": 5.0, "an": false, "gs": 0}, {"p": "หนองคาย", "x": 1.5, "y": 16.1, "tier": "secondary", "st": 6, "c": "C4", "fo": 5.6, "los": 1.65, "sea": 0.068, "gu": 1226784, "occ": 68.98, "g1": 6.6, "g2": 7.4, "an": false, "gs": 4}, {"p": "มหาสารคาม", "x": 5.3, "y": 7.6, "tier": "secondary", "st": 0, "c": "C4", "fo": 1.7, "los": 1.92, "sea": 0.086, "gu": 360693, "occ": 54.46, "g1": -4.5, "g2": 6.8, "an": false, "gs": 0}, {"p": "ร้อยเอ็ด", "x": 1.4, "y": 9.3, "tier": "secondary", "st": 0, "c": "C4", "fo": 1.2, "los": 1.77, "sea": 0.094, "gu": 423793, "occ": 53.8, "g1": -5.7, "g2": 12.5, "an": false, "gs": 0}, {"p": "กาฬสินธุ์", "x": 7.2, "y": 7.7, "tier": "secondary", "st": 1, "c": "C4", "fo": 2.1, "los": 1.79, "sea": 0.09, "gu": 318052, "occ": 55.42, "g1": -2.3, "g2": 2.7, "an": false, "gs": 0}, {"p": "สกลนคร", "x": 8.0, "y": 19.0, "tier": "secondary", "st": 4, "c": "C4", "fo": 1.0, "los": 1.88, "sea": 0.104, "gu": 766672, "occ": 55.88, "g1": 7.6, "g2": 2.8, "an": false, "gs": 4}, {"p": "นครพนม", "x": 25.6, "y": 6.4, "tier": "secondary", "st": 0, "c": "C4", "fo": 3.4, "los": 1.95, "sea": 0.055, "gu": 863257, "occ": 76.45, "g1": -23.3, "g2": 4.5, "an": false, "gs": 0}, {"p": "มุกดาหาร", "x": 1.8, "y": 7.6, "tier": "secondary", "st": 0, "c": "C4", "fo": 1.9, "los": 1.91, "sea": 0.108, "gu": 477915, "occ": 47.82, "g1": 3.1, "g2": 2.6, "an": false, "gs": 1}, {"p": "เชียงใหม่", "x": 2.7, "y": 7.7, "tier": "primary", "st": 6, "c": "C2", "fo": 35.0, "los": 2.54, "sea": 0.142, "gu": 8316537, "occ": 76.05, "g1": 0.5, "g2": 4.5, "an": true, "gs": 4}, {"p": "ลำพูน", "x": 4.4, "y": 14.4, "tier": "secondary", "st": 2, "c": "C2", "fo": 5.4, "los": 1.69, "sea": 0.164, "gu": 369205, "occ": 55.21, "g1": 0.9, "g2": 8.6, "an": false, "gs": 2}, {"p": "ลำปาง", "x": 7.2, "y": 12.6, "tier": "secondary", "st": 6, "c": "C2", "fo": 4.9, "los": 1.79, "sea": 0.195, "gu": 868356, "occ": 58.89, "g1": 1.4, "g2": 3.8, "an": false, "gs": 4}, {"p": "อุตรดิตถ์", "x": 2.1, "y": 13.5, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.4, "los": 1.47, "sea": 0.076, "gu": 629095, "occ": 51.89, "g1": 6.9, "g2": 4.0, "an": false, "gs": 1}, {"p": "แพร่", "x": 7.9, "y": 6.6, "tier": "secondary", "st": 0, "c": "C3", "fo": 1.2, "los": 1.63, "sea": 0.088, "gu": 606519, "occ": 65.28, "g1": -3.2, "g2": 1.9, "an": false, "gs": 0}, {"p": "น่าน", "x": 21.7, "y": 10.1, "tier": "secondary", "st": 0, "c": "C2", "fo": 1.8, "los": 1.76, "sea": 0.134, "gu": 1200455, "occ": 69.77, "g1": -8.6, "g2": -2.2, "an": false, "gs": 0}, {"p": "พะเยา", "x": 13.3, "y": 17.3, "tier": "secondary", "st": 0, "c": "C2", "fo": 2.3, "los": 1.73, "sea": 0.131, "gu": 593477, "occ": 67.17, "g1": -4.0, "g2": 8.0, "an": false, "gs": 0}, {"p": "เชียงราย", "x": -3.7, "y": 3.6, "tier": "secondary", "st": 0, "c": "C2", "fo": 8.1, "los": 1.83, "sea": 0.155, "gu": 4681916, "occ": 72.34, "g1": 3.5, "g2": 3.8, "an": false, "gs": 0}, {"p": "แม่ฮ่องสอน", "x": 0.6, "y": 11.3, "tier": "secondary", "st": 6, "c": "C2", "fo": 20.0, "los": 1.93, "sea": 0.164, "gu": 1248994, "occ": 56.4, "g1": 8.3, "g2": 2.3, "an": false, "gs": 4}, {"p": "นครสวรรค์", "x": 13.1, "y": 9.6, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.6, "los": 1.67, "sea": 0.081, "gu": 1119420, "occ": 53.6, "g1": -0.5, "g2": -2.8, "an": false, "gs": 0}, {"p": "อุทัยธานี", "x": 5.6, "y": 10.9, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.3, "los": 1.71, "sea": 0.065, "gu": 396729, "occ": 52.25, "g1": 2.8, "g2": 2.2, "an": false, "gs": 1}, {"p": "กำแพงเพชร", "x": 11.9, "y": 15.6, "tier": "secondary", "st": 0, "c": "C3", "fo": 1.4, "los": 1.67, "sea": 0.077, "gu": 446716, "occ": 41.44, "g1": 6.8, "g2": -4.1, "an": false, "gs": 0}, {"p": "ตาก", "x": -13.4, "y": -1.6, "tier": "secondary", "st": 0, "c": "C3", "fo": 1.2, "los": 1.57, "sea": 0.088, "gu": 1600639, "occ": 66.99, "g1": 12.6, "g2": -0.9, "an": false, "gs": 0}, {"p": "สุโขทัย", "x": -3.7, "y": 18.5, "tier": "secondary", "st": 0, "c": "C2", "fo": 16.8, "los": 1.54, "sea": 0.138, "gu": 703355, "occ": 43.62, "g1": 11.6, "g2": 9.7, "an": false, "gs": 1}, {"p": "พิษณุโลก", "x": 4.7, "y": 14.8, "tier": "secondary", "st": 0, "c": "C3", "fo": 6.6, "los": 1.51, "sea": 0.089, "gu": 1813656, "occ": 53.65, "g1": 2.6, "g2": 7.0, "an": false, "gs": 1}, {"p": "พิจิตร", "x": -0.9, "y": 4.0, "tier": "secondary", "st": 0, "c": "C3", "fo": 0.3, "los": 1.43, "sea": 0.06, "gu": 362967, "occ": 51.7, "g1": 8.2, "g2": -3.6, "an": false, "gs": 0}, {"p": "เพชรบูรณ์", "x": 1.9, "y": 2.9, "tier": "secondary", "st": 0, "c": "C2", "fo": 0.5, "los": 1.49, "sea": 0.185, "gu": 2280529, "occ": 51.68, "g1": -1.6, "g2": 2.6, "an": false, "gs": 0}, {"p": "ราชบุรี", "x": -6.4, "y": 15.3, "tier": "secondary", "st": 3, "c": "C4", "fo": 2.8, "los": 1.77, "sea": 0.079, "gu": 1180910, "occ": 61.53, "g1": 20.1, "g2": 1.2, "an": false, "gs": 4}, {"p": "กาญจนบุรี", "x": -9.2, "y": 10.2, "tier": "primary", "st": 3, "c": "C4", "fo": 4.3, "los": 1.72, "sea": 0.057, "gu": 3768175, "occ": 69.11, "g1": 12.0, "g2": 7.4, "an": true, "gs": 4}, {"p": "สุพรรณบุรี", "x": -13.5, "y": -1.5, "tier": "secondary", "st": 0, "c": "C2", "fo": 2.1, "los": 1.62, "sea": 0.132, "gu": 968332, "occ": 60.27, "g1": 15.3, "g2": -4.2, "an": false, "gs": 0}, {"p": "นครปฐม", "x": -13.1, "y": 9.4, "tier": "primary", "st": 0, "c": "C3", "fo": 3.3, "los": 1.57, "sea": 0.085, "gu": 1004391, "occ": 58.13, "g1": 19.7, "g2": 2.6, "an": false, "gs": 3}, {"p": "สมุทรสาคร", "x": -19.2, "y": -5.9, "tier": "primary", "st": 0, "c": "C3", "fo": 0.7, "los": 1.45, "sea": 0.063, "gu": 326872, "occ": 49.83, "g1": 8.2, "g2": 6.1, "an": false, "gs": 0}, {"p": "สมุทรสงคราม", "x": -15.0, "y": -3.8, "tier": "secondary", "st": 0, "c": "C3", "fo": 4.1, "los": 1.47, "sea": 0.055, "gu": 745327, "occ": 59.72, "g1": 8.8, "g2": 3.0, "an": false, "gs": 0}, {"p": "เพชรบุรี", "x": -9.2, "y": -3.6, "tier": "primary", "st": 0, "c": "C4", "fo": 5.5, "los": 1.52, "sea": 0.093, "gu": 3813502, "occ": 70.06, "g1": 3.6, "g2": 2.1, "an": true, "gs": 0}, {"p": "ประจวบคีรีขันธ์", "x": 12.7, "y": 6.6, "tier": "primary", "st": 0, "c": "C4", "fo": 9.5, "los": 1.65, "sea": 0.085, "gu": 6017100, "occ": 72.8, "g1": -11.6, "g2": 5.1, "an": true, "gs": 0}, {"p": "นครศรีธรรมราช", "x": 15.7, "y": 14.8, "tier": "secondary", "st": 3, "c": "C4", "fo": 1.3, "los": 1.91, "sea": 0.068, "gu": 2579467, "occ": 71.59, "g1": -5.3, "g2": 4.1, "an": false, "gs": 0}, {"p": "กระบี่", "x": 21.3, "y": 33.2, "tier": "primary", "st": 6, "c": "C1", "fo": 51.3, "los": 2.96, "sea": 0.106, "gu": 4279800, "occ": 70.68, "g1": 5.8, "g2": 4.8, "an": true, "gs": 4}, {"p": "พังงา", "x": 1.8, "y": 36.7, "tier": "primary", "st": 6, "c": "C1", "fo": 54.1, "los": 4.04, "sea": 0.102, "gu": 1639528, "occ": 76.37, "g1": 25.2, "g2": 7.8, "an": false, "gs": 4}, {"p": "ภูเก็ต", "x": 6.9, "y": 18.0, "tier": "primary", "st": 0, "c": "C1", "fo": 79.7, "los": 4.03, "sea": 0.067, "gu": 12657079, "occ": 76.35, "g1": 15.0, "g2": -3.5, "an": true, "gs": 0}, {"p": "สุราษฎร์ธานี", "x": 7.6, "y": 21.5, "tier": "primary", "st": 3, "c": "C1", "fo": 52.9, "los": 3.63, "sea": 0.073, "gu": 6734559, "occ": 77.56, "g1": 11.9, "g2": 1.7, "an": true, "gs": 4}, {"p": "ระนอง", "x": 12.7, "y": 36.8, "tier": "secondary", "st": 6, "c": "C4", "fo": 3.3, "los": 1.88, "sea": 0.079, "gu": 797713, "occ": 60.84, "g1": 10.2, "g2": 11.3, "an": false, "gs": 4}, {"p": "ชุมพร", "x": 15.7, "y": 25.0, "tier": "secondary", "st": 3, "c": "C4", "fo": 2.9, "los": 1.81, "sea": 0.048, "gu": 1420643, "occ": 64.32, "g1": -0.3, "g2": 8.3, "an": false, "gs": 0}, {"p": "สงขลา", "x": 3.7, "y": 13.0, "tier": "primary", "st": 0, "c": "C1", "fo": 44.4, "los": 2.34, "sea": 0.098, "gu": 4174333, "occ": 69.42, "g1": 11.2, "g2": -1.3, "an": true, "gs": 0}, {"p": "สตูล", "x": 17.1, "y": 10.5, "tier": "secondary", "st": 0, "c": "C4", "fo": 24.3, "los": 1.87, "sea": 0.086, "gu": 1161839, "occ": 68.53, "g1": -5.1, "g2": -1.3, "an": false, "gs": 0}, {"p": "ตรัง", "x": 3.9, "y": 14.2, "tier": "secondary", "st": 0, "c": "C2", "fo": 6.4, "los": 1.8, "sea": 0.154, "gu": 946181, "occ": 58.48, "g1": 8.9, "g2": 1.2, "an": false, "gs": 3}, {"p": "พัทลุง", "x": 25.9, "y": 35.5, "tier": "secondary", "st": 4, "c": "C4", "fo": 2.7, "los": 1.92, "sea": 0.069, "gu": 736859, "occ": 65.88, "g1": 2.9, "g2": 5.2, "an": false, "gs": 4}, {"p": "ปัตตานี", "x": 13.5, "y": 30.9, "tier": "secondary", "st": 2, "c": "C2", "fo": 17.6, "los": 1.74, "sea": 0.106, "gu": 316877, "occ": 59.8, "g1": 10.3, "g2": 5.7, "an": false, "gs": 2}, {"p": "ยะลา", "x": 9.4, "y": 18.1, "tier": "secondary", "st": 6, "c": "C2", "fo": 46.7, "los": 1.65, "sea": 0.112, "gu": 1206668, "occ": 80.93, "g1": 3.2, "g2": 4.9, "an": false, "gs": 4}, {"p": "นราธิวาส", "x": 20.8, "y": 42.6, "tier": "secondary", "st": 2, "c": "C2", "fo": 44.3, "los": 1.74, "sea": 0.09, "gu": 634193, "occ": 65.99, "g1": 21.2, "g2": -0.2, "an": false, "gs": 0}], "funnel": [77, 34, 27, 24, 19], "six": ["ชัยภูมิ", "ยะลา", "ระนอง", "ลำปาง", "หนองคาย", "แม่ฮ่องสอน"], "nat": {"years": [2556, 2557, 2558, 2559, 2560, 2561, 2562, 2563, 2564, 2565, 2566, 2567, 2568], "guests": [69.9, 72.2, 81.2, 86.8, 94.2, 98.5, 100.0, 43.4, 20.5, 60.9, 91.9, 102.4, 103.5], "rooms": [69.1, 70.6, 83.9, 88.1, 94.8, 95.2, 100.0, 101.9, 98.9, 100.9, 102.9, 107.8, 107.8], "n": 75}, "clusters": {"C1": {"n": 9, "fo": 51.4, "los": 2.47, "sea": 0.073, "gu": 4279800, "ppr": 1.7, "members": ["กรุงเทพมหานคร", "ชลบุรี", "ภูเก็ต", "สุราษฎร์ธานี", "กระบี่", "สงขลา", "ระยอง", "พังงา", "สมุทรปราการ"]}, "C2": {"n": 16, "fo": 7.3, "los": 1.74, "sea": 0.14, "gu": 957256, "ppr": 1.9, "members": ["เชียงใหม่", "เชียงราย", "เพชรบูรณ์", "ตราด", "แม่ฮ่องสอน", "ยะลา", "น่าน", "สุพรรณบุรี", "ตรัง", "ลำปาง", "สุโขทัย", "นราธิวาส", "พะเยา", "สระแก้ว", "ลำพูน", "ปัตตานี"]}, "C3": {"n": 20, "fo": 0.9, "los": 1.53, "sea": 0.078, "gu": 782572, "ppr": 1.94, "members": ["บุรีรัมย์", "พิษณุโลก", "ตาก", "อุบลราชธานี", "นครสวรรค์", "นครปฐม", "สระบุรี", "ชัยภูมิ", "สุรินทร์", "ลพบุรี", "สมุทรสงคราม", "อุตรดิตถ์", "แพร่", "กำแพงเพชร", "อุทัยธานี", "พิจิตร", "สมุทรสาคร", "ชัยนาท", "สิงห์บุรี", "อ่างทอง"]}, "C4": {"n": 32, "fo": 2.3, "los": 1.79, "sea": 0.081, "gu": 970094, "ppr": 1.77, "members": ["ประจวบคีรีขันธ์", "นครราชสีมา", "เพชรบุรี", "กาญจนบุรี", "นครศรีธรรมราช", "ขอนแก่น", "อุดรธานี", "จันทบุรี", "เลย", "ชุมพร", "นครนายก", "นนทบุรี", "หนองคาย", "ราชบุรี", "สตูล", "พระนครศรีอยุธยา", "ปทุมธานี", "นครพนม", "ปราจีนบุรี", "ระนอง", "สกลนคร", "พัทลุง", "มุกดาหาร", "บึงกาฬ", "ร้อยเอ็ด", "ฉะเชิงเทรา", "มหาสารคาม", "ศรีสะเกษ", "กาฬสินธุ์", "ยโสธร", "หนองบัวลำภู", "อำนาจเจริญ"]}}, "pairs": [{"t": "ระนอง", "a": "ประจวบคีรีขันธ์", "c": "C4", "sim": 0.74, "conf": "low", "nt": 4, "nl": 26, "rows": [{"k": "พูลวิลล่า/ส่วนตัว", "t": 3.9, "a": 4.5, "gap": 0.7}, {"k": "ริมทะเล", "t": 0.0, "a": 22.7, "gap": 22.7}, {"k": "ธรรมชาติ/วิว", "t": 3.9, "a": 4.5, "gap": 0.7}, {"k": "แคมป์/แกลมปิ้ง", "t": 0.0, "a": 0.0, "gap": 0.0}, {"k": "โฮมสเตย์/ชุมชน", "t": 0.0, "a": 6.8, "gap": 6.8}, {"k": "บูทีค/ดีไซน์", "t": 0.0, "a": 11.4, "gap": 11.4}, {"k": "สปา/สุขภาพ", "t": 3.9, "a": 2.3, "gap": -1.6}, {"k": "โฮสเทล/ประหยัด", "t": 7.7, "a": 4.5, "gap": -3.1}, {"k": "ธุรกิจ/ในเมือง", "t": 0.0, "a": 0.0, "gap": 0.0}], "md": 2.63}, {"t": "ลำปาง", "a": "เชียงใหม่", "c": "C2", "sim": 0.71, "conf": "ok", "nt": 15, "nl": 33, "rows": [{"k": "พูลวิลล่า/ส่วนตัว", "t": 0.0, "a": 4.4, "gap": 4.4}, {"k": "ธรรมชาติ/วิว", "t": 15.2, "a": 19.5, "gap": 4.3}, {"k": "แคมป์/แกลมปิ้ง", "t": 0.0, "a": 0.9, "gap": 0.9}, {"k": "โฮมสเตย์/ชุมชน", "t": 9.1, "a": 1.8, "gap": -7.3}, {"k": "บูทีค/ดีไซน์", "t": 9.1, "a": 9.7, "gap": 0.6}, {"k": "สปา/สุขภาพ", "t": 0.0, "a": 11.5, "gap": 11.5}, {"k": "โฮสเทล/ประหยัด", "t": 9.1, "a": 4.4, "gap": -4.7}, {"k": "ธุรกิจ/ในเมือง", "t": 15.2, "a": 13.3, "gap": -1.9}], "md": 3.45}, {"t": "หนองคาย", "a": "กาญจนบุรี", "c": "C4", "sim": 0.64, "conf": "ok", "nt": 37, "nl": 118, "rows": [{"k": "พูลวิลล่า/ส่วนตัว", "t": 2.5, "a": 9.8, "gap": 7.3}, {"k": "ธรรมชาติ/วิว", "t": 16.1, "a": 53.6, "gap": 37.5}, {"k": "แคมป์/แกลมปิ้ง", "t": 2.5, "a": 8.0, "gap": 5.5}, {"k": "โฮมสเตย์/ชุมชน", "t": 5.1, "a": 2.7, "gap": -2.4}, {"k": "บูทีค/ดีไซน์", "t": 1.7, "a": 14.3, "gap": 12.6}, {"k": "สปา/สุขภาพ", "t": 5.9, "a": 3.6, "gap": -2.4}, {"k": "โฮสเทล/ประหยัด", "t": 0.8, "a": 0.9, "gap": 0.1}, {"k": "ธุรกิจ/ในเมือง", "t": 9.3, "a": 6.2, "gap": -3.1}], "md": 1.54}, {"t": "ยะลา", "a": "เชียงใหม่", "c": "C2", "sim": 0.53, "conf": "low", "nt": 8, "nl": 17, "rows": [{"k": "พูลวิลล่า/ส่วนตัว", "t": 0.0, "a": 4.4, "gap": 4.4}, {"k": "ธรรมชาติ/วิว", "t": 5.9, "a": 19.5, "gap": 13.6}, {"k": "แคมป์/แกลมปิ้ง", "t": 0.0, "a": 0.9, "gap": 0.9}, {"k": "โฮมสเตย์/ชุมชน", "t": 0.0, "a": 1.8, "gap": 1.8}, {"k": "บูทีค/ดีไซน์", "t": 0.0, "a": 9.7, "gap": 9.7}, {"k": "สปา/สุขภาพ", "t": 5.9, "a": 11.5, "gap": 5.6}, {"k": "โฮสเทล/ประหยัด", "t": 11.8, "a": 4.4, "gap": -7.3}, {"k": "ธุรกิจ/ในเมือง", "t": 29.4, "a": 13.3, "gap": -16.1}], "md": 2.66}, {"t": "แม่ฮ่องสอน", "a": "เชียงใหม่", "c": "C2", "sim": 0.46, "conf": "ok", "nt": 10, "nl": 25, "rows": [{"k": "พูลวิลล่า/ส่วนตัว", "t": 0.0, "a": 4.4, "gap": 4.4}, {"k": "ธรรมชาติ/วิว", "t": 12.0, "a": 19.5, "gap": 7.5}, {"k": "แคมป์/แกลมปิ้ง", "t": 0.0, "a": 0.9, "gap": 0.9}, {"k": "โฮมสเตย์/ชุมชน", "t": 12.0, "a": 1.8, "gap": -10.2}, {"k": "บูทีค/ดีไซน์", "t": 4.0, "a": 9.7, "gap": 5.7}, {"k": "สปา/สุขภาพ", "t": 4.0, "a": 11.5, "gap": 7.5}, {"k": "โฮสเทล/ประหยัด", "t": 0.0, "a": 4.4, "gap": 4.4}, {"k": "ธุรกิจ/ในเมือง", "t": 20.0, "a": 13.3, "gap": -6.7}], "md": 2.3}], "sil": {"2": 0.434, "3": 0.296, "4": 0.265, "5": 0.264, "6": 0.272, "7": 0.251, "8": 0.227}, "occ_cut": 53.8, "size_cut": 477915, "tests": {"cols": ["guests|q25", "guests|q33", "guests|nosize", "room_nights|q25", "room_nights|q33", "room_nights|nosize"], "rows": [{"p": "ชัยภูมิ", "v": [true, true, true, true, true, true]}, {"p": "ยะลา", "v": [true, true, true, true, true, true]}, {"p": "ระนอง", "v": [true, true, true, true, true, true]}, {"p": "แม่ฮ่องสอน", "v": [true, true, true, true, true, true]}, {"p": "ลำปาง", "v": [true, true, true, true, true, true]}, {"p": "หนองคาย", "v": [true, true, true, true, true, true]}, {"p": "สกลนคร", "v": [true, false, true, true, false, true]}, {"p": "พัทลุง", "v": [true, false, true, true, false, true]}, {"p": "ชุมพร", "v": [false, false, false, true, true, true]}, {"p": "อุดรธานี", "v": [false, false, false, true, true, true]}, {"p": "นครศรีธรรมราช", "v": [false, false, false, true, true, true]}, {"p": "เลย", "v": [false, false, false, true, true, true]}, {"p": "ลพบุรี", "v": [true, true, true, false, false, false]}, {"p": "ราชบุรี", "v": [true, true, true, false, false, false]}, {"p": "บึงกาฬ", "v": [false, false, true, false, false, true]}, {"p": "ปัตตานี", "v": [false, false, true, false, false, true]}, {"p": "นราธิวาส", "v": [false, false, false, true, false, true]}, {"p": "ลำพูน", "v": [false, false, true, false, false, true]}, {"p": "กาฬสินธุ์", "v": [false, false, false, false, false, true]}]}, "sil_ward": {"2": 0.433, "3": 0.284, "4": 0.218, "5": 0.232, "6": 0.241, "7": 0.241, "8": 0.249}, "corr": {"labels": ["ขนาดตลาด", "% ต่างชาติ", "วันพัก", "ฤดูกาล", "คน/ห้อง", "อัตราเข้าพัก", "ค่าที่พัก/คน"], "m": [[1.0, 0.54, 0.53, 0.02, -0.05, 0.73, 0.66], [0.54, 1.0, 0.55, 0.06, -0.18, 0.53, 0.71], [0.53, 0.55, 1.0, 0.08, -0.64, 0.54, 0.47], [0.02, 0.06, 0.08, 1.0, 0.04, -0.08, 0.03], [-0.05, -0.18, -0.64, 0.04, 1.0, -0.1, -0.0], [0.73, 0.53, 0.54, -0.08, -0.1, 1.0, 0.55], [0.66, 0.71, 0.47, 0.03, -0.0, 0.55, 1.0]]}, "api": {"themes": [["วัด/ศาสนา", 37.5], ["ภูเขา/ป่า/น้ำตก", 34.4], ["แม่น้ำ/ทะเลสาบ", 20.3], ["ประวัติศาสตร์", 19.3], ["เกษตร/ฟาร์ม", 10.8], ["ทะเล/เกาะ", 10.3], ["ชุมชน/วิถีถิ่น", 9.8], ["น้ำพุร้อน/สุขภาพ", 1.2]], "concepts": [["ธรรมชาติ/วิว", 13.4], ["ธุรกิจ/ในเมือง", 8.2], ["โฮมสเตย์/ชุมชน", 5.9], ["สปา/สุขภาพ", 5.7], ["บูทีค/ดีไซน์", 4.3], ["ริมทะเล", 4.1], ["พูลวิลล่า", 3.3], ["โฮสเทล/ประหยัด", 3.1], ["แคมป์/แกลมปิ้ง", 1.3]]}};
+try { const saved = localStorage.getItem('theme'); if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved; } catch (e) {}
 const NS = 'http://www.w3.org/2000/svg';
-const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const tip = document.getElementById('tip');
-function showTip(e, html){ tip.innerHTML = html; tip.style.opacity = 1; moveTip(e); }
-function moveTip(e){ const pad = 14, w = tip.offsetWidth, h = tip.offsetHeight;
-  let x = e.clientX + pad, y = e.clientY + pad;
-  if (x + w > innerWidth - 8) x = e.clientX - w - pad; if (y + h > innerHeight - 8) y = e.clientY - h - pad;
-  tip.style.left = x + 'px'; tip.style.top = y + 'px'; }
-function hideTip(){ tip.style.opacity = 0; }
-function el(tag, attrs, parent){ const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; }
-function svgBox(id, W, H){ const host = document.getElementById(id); host.innerHTML = ''; return el('svg', {viewBox:`0 0 ${W} ${H}`, role:'img'}, host); }
-const fmt = (v, d=0) => v.toLocaleString('th-TH', {maximumFractionDigits:d, minimumFractionDigits:d});
+const $ = s => document.querySelector(s);
+const VIEWS = [['overview', 'Overview'], ['data', 'Data'], ['clean', 'Cleaning'], ['eda', 'EDA'], ['screen', 'Screening'], ['model', 'Model'], ['join', 'Matching'], ['insight', 'Answer'], ['notes', 'Notes']];
+const CLN = {C1:'ฮับต่างชาติ พักนาน', C2:'เที่ยวตามฤดู', C3:'คนไทยแวะสั้น', C4:'ตลาดคนไทยทั่วไป'};
+const CLV = {C1:'--c1', C2:'--c2', C3:'--c3', C4:'--c4'};
+const SIX = new Set(D.six), PAIR = Object.fromEntries(D.pairs.map(p => [p.t, p])), ANALOG = new Set(D.pairs.map(p => p.a));
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let curPair = 'หนองคาย', T = {};
+const tip = $('#tip');
+
+function readTokens(){ const cs = getComputedStyle(document.documentElement); for (const k of ['--surface','--ink','--ink2','--grid','--dim','--dim2','--pass','--target','--analog','--c1','--c2','--c3','--c4','--raise']) T[k] = cs.getPropertyValue(k).trim(); }
+function el(tag, a, p){ const n = document.createElementNS(NS, tag); for (const k in a) n.setAttribute(k, a[k]); if (p) p.appendChild(n); return n; }
 const lin = (d0, d1, r0, r1) => v => r0 + (v - d0) / (d1 - d0) * (r1 - r0);
-const narrow = () => document.getElementById('answer').offsetWidth < 560;
-const wOf = id => Math.max(300, Math.round(document.getElementById(id).clientWidth || 900));
+const sign = v => (v > 0 ? '+' : '') + v;
+function txt(g, x, y, s, o = {}){ const t = el('text', {x, y, 'text-anchor':o.a || 'start'}, g); t.textContent = s; if (o.w) t.style.fontWeight = o.w; if (o.c) t.style.fill = T[o.c]; if (o.s) t.style.fontSize = o.s + 'px'; return t; }
+function showTip(e, h){ tip.innerHTML = h; tip.style.opacity = 1; const w = tip.offsetWidth, hh = tip.offsetHeight; let x = e.clientX + 14, y = e.clientY + 14; if (x + w > innerWidth - 8) x = e.clientX - w - 14; if (y + hh > innerHeight - 8) y = e.clientY - hh - 14; tip.style.left = Math.max(8, x) + 'px'; tip.style.top = Math.max(8, y) + 'px'; }
+const hideTip = () => tip.style.opacity = 0;
+function hover(node, html){ node.addEventListener('mousemove', e => showTip(e, html)); node.addEventListener('mouseleave', hideTip); node.addEventListener('click', e => showTip(e, html)); }
+function canvas(host, H){ const W = Math.max(260, Math.round(host.clientWidth)); host.innerHTML = ''; return [el('svg', {viewBox:`0 0 ${W} ${H}`, role:'img'}, host), W, H]; }
+const small = host => host.clientWidth < 460;
 
-/* ---------- 04 national index (line, crosshair) ---------- */
-function drawNat(){
-  const n = D.nat, W = wOf('ch-nat'), H = narrow() ? 300 : 320, m = {l:40, r:narrow() ? 96 : 110, t:14, b:30};
-  const s = svgBox('ch-nat', W, H);
-  const x = lin(0, n.years.length - 1, m.l, W - m.r), y = lin(0, 120, H - m.b, m.t);
-  for (const v of [0, 20, 40, 60, 80, 100, 120]) {
-    el('line', {x1:m.l, x2:W - m.r, y1:y(v), y2:y(v), stroke: v === 100 ? css('--dim-strong') : css('--grid'), 'stroke-dasharray': v === 100 ? '4 4' : ''}, s);
-    el('text', {x:m.l - 8, y:y(v) + 4, 'text-anchor':'end'}, s).textContent = v;
+const CHARTS = {
+  nat(host, anim){
+    const n = D.nat, sm = small(host), [s, W, H] = canvas(host, sm ? 240 : 280), m = {l:34, r:sm ? 70 : 92, t:12, b:26};
+    const x = lin(0, n.years.length - 1, m.l, W - m.r), y = lin(0, 120, H - m.b, m.t);
+    for (const v of [0, 40, 80, 100, 120]) { el('line', {x1:m.l, x2:W - m.r, y1:y(v), y2:y(v), stroke:T[v === 100 ? '--dim2' : '--grid'], 'stroke-dasharray':v === 100 ? '4 4' : ''}, s); txt(s, m.l - 6, y(v) + 4, v, {a:'end'}); }
+    n.years.forEach((yr, i) => { if (i % (sm ? 4 : 2)) return; txt(s, x(i), H - 6, yr, {a:'middle'}); });
+    el('rect', {x:x(7), y:m.t, width:x(9) - x(7), height:H - m.b - m.t, fill:T['--grid']}, s); txt(s, (x(7) + x(9)) / 2, m.t + 14, 'โควิด', {a:'middle', s:11});
+    for (const [k, c, lab] of [['guests', '--target', 'ผู้เข้าพัก'], ['rooms', '--analog', 'ห้องพัก']]) {
+      const path = el('path', {d:n[k].map((v, i) => `${i ? 'L' : 'M'}${x(i)},${y(v)}`).join(''), fill:'none', stroke:T[c], 'stroke-width':2.5, 'stroke-linejoin':'round'}, s);
+      if (anim) { const L = path.getTotalLength() + 2; path.style.strokeDasharray = L; path.style.strokeDashoffset = L; requestAnimationFrame(() => { path.style.transition = 'stroke-dashoffset 1.2s ease'; path.style.strokeDashoffset = 0; }); }
+      const last = n[k].length - 1; el('circle', {cx:x(last), cy:y(n[k][last]), r:4, fill:T[c]}, s);
+      txt(s, x(last) + 8, y(n[k][last]) + (k === 'rooms' ? -6 : 14), `${lab} ${n[k][last]}`, {w:600, c:'--ink'});
+    }
+    const cross = el('line', {y1:m.t, y2:H - m.b, stroke:T['--dim2'], opacity:0}, s);
+    const hit = el('rect', {x:m.l, y:m.t, width:W - m.l - m.r, height:H - m.t - m.b, fill:'transparent'}, s);
+    const mv = e => { const r = s.getBoundingClientRect(), px = (e.clientX - r.left) / r.width * W, i = Math.max(0, Math.min(n.years.length - 1, Math.round((px - m.l) / (W - m.l - m.r) * (n.years.length - 1))));
+      cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.setAttribute('opacity', 1); showTip(e, `<b>ปี ${n.years[i]}</b><br>ผู้เข้าพัก ${n.guests[i]} · ห้องพัก ${n.rooms[i]}`); };
+    hit.addEventListener('mousemove', mv); hit.addEventListener('click', mv); hit.addEventListener('mouseleave', () => { cross.setAttribute('opacity', 0); hideTip(); });
+  },
+  gap(host){
+    const sm = small(host), [s, W, H] = canvas(host, sm ? 330 : 380), m = {l:44, r:12, t:12, b:28};
+    const x = lin(-22, 30, m.l, W - m.r), y = lin(-15, 45, H - m.b, m.t);
+    for (const v of (sm ? [-20, 0, 20] : [-20, -10, 0, 10, 20, 30])) { el('line', {x1:x(v), x2:x(v), y1:m.t, y2:H - m.b, stroke:T['--grid']}, s); txt(s, x(v), H - 8, sign(v) + '%', {a:'middle'}); }
+    for (const v of [-10, 0, 20, 40]) { el('line', {x1:m.l, x2:W - m.r, y1:y(v), y2:y(v), stroke:T['--grid']}, s); txt(s, m.l - 6, y(v) + 4, sign(v) + '%', {a:'end'}); }
+    el('line', {x1:x(-15), y1:y(-15), x2:x(30), y2:y(30), stroke:T['--dim2'], 'stroke-dasharray':'5 4', 'stroke-width':1.5}, s);
+    txt(s, x(-21), y(42), '↖ คนมาเพิ่มเร็วกว่าห้อง', {w:600, c:'--ink'}); txt(s, x(29), y(-12), 'ห้องล้น ↘', {a:'end', w:600, c:'--ink'});
+    for (const p of [...D.points].sort((a, b) => SIX.has(a.p) - SIX.has(b.p))) { const hi = SIX.has(p.p);
+      const c = el('circle', {cx:x(Math.max(-22, Math.min(30, p.x))), cy:y(p.y), r:hi ? 7 : 4.5, fill:T[hi ? '--target' : '--dim2'], opacity:hi ? 1 : .6, stroke:T['--surface'], 'stroke-width':1.5}, s);
+      hover(c, `<b>${p.p}</b><br>คนมาพักโต ${sign(p.y)}% · ห้องโต ${sign(p.x)}%<br>Gap ปี 66→67 ${sign(p.g1)} · 67→68 ${sign(p.g2)} จุด%`); }
+    const lab = {'ระนอง':[10, 4, 'start'], 'ยะลา':[10, 4, 'start'], 'ลำปาง':[10, 14, 'start'], 'ชัยภูมิ':[-10, -6, 'end'], 'หนองคาย':[-10, 4, 'end'], 'แม่ฮ่องสอน':[-10, 14, 'end']};
+    for (const p of D.points) if (lab[p.p]) { const [dx, dy, a] = lab[p.p]; txt(s, x(p.x) + dx, y(p.y) + dy, p.p, {a, w:600, c:'--ink', s:12}); }
+  },
+  gate(host, anim){
+    const sm = small(host), [s, W, H] = canvas(host, sm ? 290 : 320), m = {l:6, r:6, t:10, b:42};
+    const labs = ['ตกด่าน 1', 'ตกด่าน 2', 'ตกด่าน 3', 'ตกด่าน 4', 'ผ่านครบ'], cnt = [0, 0, 0, 0, 0]; D.points.forEach(p => cnt[p.gs]++);
+    const colW = (W - m.l - m.r) / 5, per = sm ? 4 : 5, sp = Math.min(colW / (per + .4), (H - m.t - m.b) / Math.ceil(43 / per)), r = Math.min(7, sp * .36), k = [0, 0, 0, 0, 0], g = el('g', {}, s);
+    const dots = [...D.points].sort((a, b) => SIX.has(b.p) - SIX.has(a.p)).map(p => { const gi = p.gs, i = k[gi]++, cx = m.l + gi * colW + colW / 2 - (per - 1) * sp / 2 + (i % per) * sp, cy = H - m.b - Math.floor(i / per) * sp - sp / 2, hi = SIX.has(p.p);
+      const c = el('circle', {class:'dot', r, cx:0, cy:0, fill:T[hi ? '--target' : gi === 4 ? '--pass' : '--dim2'], opacity:gi === 4 || hi ? 1 : .6}, g);
+      hover(c, `<b>${p.p}</b><br>${gi === 4 ? 'ผ่านครบ 4 ด่าน' : 'ตกที่ด่าน ' + (gi + 1)}${hi ? '<br>เมืองรองที่ผ่านครบ 6 วิธีวัด' : ''}`); return [c, cx, cy]; });
+    labs.forEach((l, gi) => { txt(s, m.l + gi * colW + colW / 2, H - m.b + 18, l, {a:'middle', w:gi === 4 ? 600 : 400, c:gi === 4 ? '--ink' : '--ink2', s:sm ? 11 : 12}); txt(s, m.l + gi * colW + colW / 2, H - m.b + 34, cnt[gi] + ' จังหวัด', {a:'middle', s:11}); });
+    if (anim) { dots.forEach(([c]) => c.style.transform = `translate(${W / 2}px,${H / 3}px)`); requestAnimationFrame(() => requestAnimationFrame(() => dots.forEach(([c, x, y], i) => { c.style.transitionDelay = (i % 25) * 10 + 'ms'; c.style.transform = `translate(${x}px,${y}px)`; }))); }
+    else dots.forEach(([c, x, y]) => { c.style.transition = 'none'; c.style.transform = `translate(${x}px,${y}px)`; });
+  },
+  tests(host){
+    const sm = small(host), cols = ['คน\n25%', 'คน\n33%', 'คน\nไม่ตัดขนาด', 'ห้อง-คืน\n25%', 'ห้อง-คืน\n33%', 'ห้อง-คืน\nไม่ตัดขนาด'], rows = D.tests.rows;
+    const rh = 24, top = 38, [s, W, H] = canvas(host, top + rows.length * rh + 4), lw = sm ? 108 : 124, nw = 36, cw = (W - lw - nw) / 6;
+    // หัวตาราง 2 ชั้น: วิธีนับ (คน / ห้อง-คืน) แล้วตามด้วยระดับเกณฑ์
+    [['นับจำนวนคน', 0], ['นับห้อง-คืน', 3]].forEach(([g, j0]) => { txt(s, lw + (j0 + 1.5) * cw, 12, g, {a:'middle', s:11, w:600, c:'--ink'}); el('line', {x1:lw + j0 * cw + 4, x2:lw + (j0 + 3) * cw - 4, y1:17, y2:17, stroke:T['--dim2']}, s); });
+    ['ตัด 25%', 'ตัด 33%', sm ? 'ไม่ตัด' : 'ไม่ตัดขนาด'].concat(['ตัด 25%', 'ตัด 33%', sm ? 'ไม่ตัด' : 'ไม่ตัดขนาด']).forEach((l, j) => txt(s, lw + j * cw + cw / 2, 31, sm ? l.replace('ตัด ', '') : l, {a:'middle', s:sm ? 10 : 11}));
+    txt(s, W - nw / 2, 20, 'ผ่าน', {a:'middle', s:11});
+    rows.forEach((r, i) => { const y0 = top + i * rh, n = r.v.filter(Boolean).length, six = n === 6;
+      txt(s, lw - 8, y0 + rh / 2 + 4, r.p, {a:'end', w:six ? 600 : 400, c:six ? '--ink' : '--ink2', s:12});
+      r.v.forEach((ok, j) => { const c = el('rect', {x:lw + j * cw + 2, y:y0 + 2, width:cw - 4, height:rh - 4, rx:3, fill:T[ok ? (six ? '--target' : '--pass') : '--raise'], opacity:ok && !six ? .55 : 1}, s);
+        hover(c, `<b>${r.p}</b><br>${cols[j].replace('\n', ' · ')}: ${ok ? 'ผ่านครบ 4 ด่าน' : 'ไม่ผ่าน'}`); });
+      txt(s, W - nw / 2, y0 + rh / 2 + 4, n + '/6', {a:'middle', w:six ? 600 : 400, c:six ? '--ink' : '--ink2', s:12}); });
+  },
+  corr(host){
+    const L = D.corr.labels, M = D.corr.m, sm = small(host), n = L.length, lw = sm ? 78 : 92, top = sm ? 70 : 62;
+    const cw = Math.min(56, (host.clientWidth - lw - 4) / n), [s, W, H] = canvas(host, top + n * cw + 6);
+    L.forEach((l, j) => { const t = txt(s, 0, 0, l, {s:sm ? 10 : 11, c:j < 5 ? '--ink' : '--ink2', w:j < 5 ? 600 : 400}); t.setAttribute('transform', `translate(${lw + j * cw + cw / 2 + 4},${top - 6}) rotate(-40)`); });
+    for (let i = 0; i < n; i++) { txt(s, lw - 6, top + i * cw + cw / 2 + 4, L[i], {a:'end', s:sm ? 10 : 11, c:i < 5 ? '--ink' : '--ink2', w:i < 5 ? 600 : 400});
+      for (let j = 0; j < n; j++) { const v = Math.abs(M[i][j]), diag = i === j;
+        const c = el('rect', {x:lw + j * cw + 1, y:top + i * cw + 1, width:cw - 2, height:cw - 2, rx:3, fill:diag ? T['--raise'] : T['--target'], 'fill-opacity':diag ? 1 : Math.max(.06, v)}, s);
+        if (!diag) { const tt = txt(s, lw + j * cw + cw / 2, top + i * cw + cw / 2 + 4, v.toFixed(2).replace('0.', '.'), {a:'middle', s:sm ? 9 : 10}); tt.style.fill = v > .55 ? '#fff' : T['--ink2']; tt.style.pointerEvents = 'none';
+          hover(c, `<b>${L[i]} × ${L[j]}</b><br>สหสัมพันธ์ ${M[i][j]}${v >= .7 ? '<br>ซ้ำกัน (≥ 0.7)' : ''}`); } } }
+    el('rect', {x:lw, y:top, width:5 * cw, height:5 * cw, fill:'none', stroke:T['--ink'], 'stroke-width':2, rx:4}, s);
+  },
+  sil(host){
+    const sm = small(host), [s, W, H] = canvas(host, sm ? 220 : 250), m = {l:40, r:sm ? 14 : 20, t:14, b:30};
+    const ks = [2,3,4,5,6,7,8], x = lin(2, 8, m.l + 10, W - m.r - 10), y = lin(0, 0.5, H - m.b, m.t);
+    el('rect', {x:x(4) - 16, y:m.t, width:32, height:H - m.b - m.t, fill:T['--raise'], rx:4}, s);
+    for (const v of [0, .1, .2, .3, .4, .5]) { el('line', {x1:m.l, x2:W - m.r, y1:y(v), y2:y(v), stroke:T['--grid']}, s); txt(s, m.l - 6, y(v) + 4, v.toFixed(1), {a:'end'}); }
+    ks.forEach(k => txt(s, x(k), H - 10, k + (k === 4 ? ' ✓' : ''), {a:'middle', w:k === 4 ? 600 : 400, c:k === 4 ? '--ink' : '--ink2'}));
+    for (const [key, c, w] of [['sil', '--dim2', 2], ['sil_ward', '--target', 2.5]]) {
+      const v = D[key]; el('path', {d:ks.map((k, i) => `${i ? 'L' : 'M'}${x(k)},${y(v[k])}`).join(''), fill:'none', stroke:T[c], 'stroke-width':w}, s);
+      ks.forEach(k => { const d = el('circle', {cx:x(k), cy:y(v[k]), r:k === 4 ? 5 : 3.5, fill:T[c]}, s); hover(d, `<b>${key === 'sil' ? 'k-Means' : 'Hierarchical Ward'}</b><br>${k} กลุ่ม · Silhouette ${v[k].toFixed(3)}`); });
+    }
+    txt(s, x(4) + 20, y(D.sil_ward[4]) + 16, 'Ward 0.218', {w:600, c:'--ink', s:12});
+    txt(s, x(4) + 20, y(D.sil[4]) - 6, 'k-Means 0.265', {c:'--ink2', s:12});
+  },
+  api(host){
+    const A = D.api, sm = small(host), lw = sm ? 112 : 140, rh = sm ? 22 : 24, gap = 34;
+    const H = 24 + A.themes.length * rh + gap + A.concepts.length * rh + 8, [s, W] = canvas(host, H), xr = W - (sm ? 44 : 52);
+    const x = lin(0, 40, lw, xr); let y0 = 14;
+    for (const [title, rows, cut] of [[`จุดขาย · สถานที่ท่องเที่ยว`, A.themes, true], [`แนวที่พัก · ที่พัก`, A.concepts, false]]) {
+      txt(s, 0, y0, title, {w:600, c:'--ink', s:12}); y0 += 10;
+      const top = y0;
+      rows.forEach(([k, v], i) => { const yy = y0 + i * rh;
+        txt(s, lw - 8, yy + rh / 2 + 4, k, {a:'end', s:sm ? 11 : 12, c:'--ink2'});
+        const r = el('rect', {x:lw, y:yy + 4, width:Math.max(1, x(v) - lw), height:rh - 8, rx:3, fill:T['--target'], 'fill-opacity':cut && v < 5 ? .35 : 1}, s);
+        hover(r, `<b>${k}</b><br>${v}% ของรายการ`); txt(s, x(v) + 6, yy + rh / 2 + 4, v + '%', {s:11, c:'--ink2'}); });
+      if (cut) { el('line', {x1:x(5), x2:x(5), y1:top, y2:top + rows.length * rh, stroke:T['--ink2'], 'stroke-dasharray':'3 3'}, s); }
+      y0 += rows.length * rh + gap;
+    }
+  },
+  clusters(host){ clusterChart(host, false); },
+  pairs(host){ clusterChart(host, true); },
+  concept(host){
+    const p = PAIR[curPair], rows = [...p.rows].sort((a, b) => b.gap - a.gap), sm = small(host), rh = sm ? 40 : 36;
+    const [s, W, H] = canvas(host, rows.length * rh + 6), m = {l:sm ? 96 : 124, r:sm ? 40 : 124}, mx = Math.max(60, ...rows.map(r => Math.max(r.t, r.a))), x = lin(0, mx, m.l, W - m.r);
+    rows.forEach((r, i) => { const yy = 3 + i * rh, bh = (rh - 12) / 2, big = r.gap >= 10;
+      txt(s, m.l - 8, yy + rh / 2 + 3, r.k, {a:'end', s:sm ? 11 : 13});
+      const b1 = el('rect', {x:m.l, y:yy + 4, width:Math.max(1.5, x(r.t) - m.l), height:bh, rx:3, fill:T['--target']}, s);
+      const b2 = el('rect', {x:m.l, y:yy + 6 + bh, width:Math.max(1.5, x(r.a) - m.l), height:bh, rx:3, fill:T['--analog']}, s);
+      txt(s, Math.max(x(r.t), x(r.a)) + 6, yy + rh / 2 + 4, sm ? (big ? '+' + r.gap : '') : `${r.t}% / ${r.a}%` + (big ? ` (+${r.gap})` : ''), {s:12, w:big ? 600 : 400, c:big ? '--ink' : '--ink2'});
+      for (const b of [b1, b2]) hover(b, `<b>${r.k}</b><br>${p.t} ${r.t}% · ${p.a} ${r.a}%<br>ต่างกัน ${sign(r.gap)} จุด%`); });
+    $('#cp-title').textContent = `${p.a}มีที่พักแนว${rows[0].k} ${rows[0].a}% แต่${p.t}มี ${rows[0].t}%`;
+    $('#cp-legend').innerHTML = `<span><i style="background:var(--target)"></i>${p.t} (เมืองรอง)</span><span><i style="background:var(--analog)"></i>${p.a} (เมืองต้นแบบ)</span>`;
+    $('#cp-cap').innerHTML = `% ของที่พักใน Directory ที่มีแนวนั้น · ${p.t} มีที่พักในระบบ ${p.nl} แห่ง อ่านแนวได้ ${p.nt} แห่ง · ความมั่นใจ <span class="pill ${p.conf}">${p.conf === 'ok' ? 'พอใช้' : 'ต่ำ ข้อมูลน้อย'}</span>`;
+  },
+};
+
+function clusterChart(host, showPairs){
+  const sm = small(host), [s, W, H] = canvas(host, sm ? 360 : 360);
+  const ce = sm ? {C1:[.26, .28], C2:[.74, .28], C3:[.26, .76], C4:[.74, .76]} : {C1:[.13, .56], C2:[.38, .56], C3:[.62, .56], C4:[.86, .56]};
+  const sp = Math.min(W / (sm ? 26 : 34), H / 22), idx = {C1:0, C2:0, C3:0, C4:0}, pos = new Map();
+  [...D.points].sort((a, b) => b.gu - a.gu).forEach(p => { const i = idx[p.c]++, ang = i * 2.39996, rr = sp * Math.sqrt(i + .5); pos.set(p.p, [ce[p.c][0] * W + rr * Math.cos(ang), ce[p.c][1] * H + rr * Math.sin(ang)]); });
+  const on = new Set([...D.pairs.flatMap(p => [p.t, p.a]), 'ชัยภูมิ']), P2 = new Map();
+  if (showPairs) {
+    const R = Math.min(W, H) * (sm ? .14 : .12), byA = {}, perCl = {};
+    D.pairs.forEach(p => (byA[p.a] = byA[p.a] || []).push(p.t));
+    for (const a in byA) { const c = D.points.find(q => q.p === a).c; (perCl[c] = perCl[c] || []).push(a); }
+    for (const a in byA) { const c = D.points.find(q => q.p === a).c, sib = perCl[c], j = sib.indexOf(a), ts = byA[a];
+      const cx = ce[c][0] * W + (j - (sib.length - 1) / 2) * R * (sm ? 2 : 2.4), cy = ce[c][1] * H; P2.set(a, [cx, cy]);
+      ts.forEach((t, i) => { const ang = Math.PI / 2 + (i - (ts.length - 1) / 2) * (Math.PI / 2.1); P2.set(t, [cx + R * Math.cos(ang), cy + R * Math.sin(ang)]); }); }
+    P2.set('ชัยภูมิ', [ce.C3[0] * W, ce.C3[1] * H]);
+    for (const p of D.pairs) { const [x1, y1] = P2.get(p.t), [x2, y2] = P2.get(p.a); el('line', {x1, y1, x2, y2, stroke:T['--ink2'], 'stroke-width':2}, s); }
   }
-  n.years.forEach((yr, i) => { if (narrow() && i % 3) return; el('text', {x:x(i), y:H - 8, 'text-anchor':'middle'}, s).textContent = yr; });
-  el('rect', {x:x(7) - 4, y:m.t, width:x(9) - x(7) + 8, height:H - m.b - m.t, fill:css('--grid'), opacity:.6}, s);
-  el('text', {x:(x(7) + x(9)) / 2, y:m.t + 14, 'text-anchor':'middle', style:'font-size:11px'}, s).textContent = 'โควิด';
-  const series = [['guests', '--target', 'ผู้เข้าพัก'], ['rooms', '--analog', 'ห้องพัก']];
-  for (const [k, c, lab] of series) {
-    el('path', {d:n[k].map((v, i) => `${i ? 'L' : 'M'}${x(i)},${y(v)}`).join(''), fill:'none', stroke:css(c), 'stroke-width':2.5, 'stroke-linejoin':'round'}, s);
-    const last = n[k].length - 1;
-    el('circle', {cx:x(last), cy:y(n[k][last]), r:4, fill:css(c), stroke:css('--surface'), 'stroke-width':2}, s);
-    el('text', {x:x(last) + 8, y:y(n[k][last]) + (k === 'rooms' ? -4 : 12), style:'font-size:12px;font-weight:600'}, s).textContent = `${lab} ${n[k][last]}`;
-  }
-  const cross = el('line', {y1:m.t, y2:H - m.b, stroke:css('--dim-strong'), opacity:0}, s);
-  const hit = el('rect', {x:m.l, y:m.t, width:W - m.l - m.r, height:H - m.t - m.b, fill:'transparent'}, s);
-  hit.addEventListener('mousemove', e => {
-    const r = s.getBoundingClientRect(), px = (e.clientX - r.left) / r.width * W;
-    const i = Math.max(0, Math.min(n.years.length - 1, Math.round((px - m.l) / (W - m.l - m.r) * (n.years.length - 1))));
-    cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.setAttribute('opacity', 1);
-    showTip(e, `<b>ปี ${n.years[i]}</b><br>ผู้เข้าพัก ${n.guests[i]} · ห้องพัก ${n.rooms[i]}`);
-  });
-  hit.addEventListener('mouseleave', () => { cross.setAttribute('opacity', 0); hideTip(); });
+  for (const c in ce) { const k = D.clusters[c], yy = ce[c][1] * H - sp * Math.sqrt(k.n) - (showPairs ? 12 : 26);
+    txt(s, ce[c][0] * W, yy, `${c} ${CLN[c]}`, {a:'middle', w:600, c:showPairs ? '--ink2' : '--ink', s:sm ? 11 : 13});
+    if (!showPairs) txt(s, ce[c][0] * W, yy + 15, `${k.n} จังหวัด`, {a:'middle', s:11}); }
+  const front = [];
+  for (const p of D.points) { const hi = showPairs && on.has(p.p), [x, y] = hi ? P2.get(p.p) : pos.get(p.p), isT = PAIR[p.p], isA = ANALOG.has(p.p);
+    const fill = showPairs ? T[hi ? (isT ? '--target' : isA ? '--analog' : '--ink2') : '--dim'] : T[CLV[p.c]];
+    const c = el('circle', {cx:x, cy:y, r:hi ? 8 : Math.min(6, sp * .4), fill, opacity:showPairs && !hi ? .5 : 1, stroke:T['--surface'], 'stroke-width':1.5}, s);
+    hover(c, `<b>${p.p}</b> · กลุ่ม ${p.c} ${CLN[p.c]}<br>ต่างชาติ ${p.fo}% · พักเฉลี่ย ${p.los} วัน${isT ? '<br>เมืองต้นแบบ: ' + isT.a : ''}`);
+    if (hi) front.push([p, x, y, isA]); }
+  for (const [p, x, y, isA] of front) { const lx = Math.min(W - 48, Math.max(48, x));
+    if (isA) txt(s, lx, y - 14, p.p, {a:'middle', w:600, c:'--ink', s:12});
+    else txt(s, lx, y + 22, p.p === 'ชัยภูมิ' ? 'ชัยภูมิ (ไม่มีคู่)' : p.p, {a:'middle', w:600, c:'--ink', s:12}); }
 }
 
-/* ---------- 05 gap scatter ---------- */
-function drawGap(){
-  const P = D.points, W = wOf('ch-gap'), H = narrow() ? 420 : 480, m = {l:48, r:20, t:16, b:40};
-  const s = svgBox('ch-gap', W, H);
-  const x = lin(-22, 30, m.l, W - m.r), y = lin(-15, 45, H - m.b, m.t);
-  for (const v of (narrow() ? [-20, 0, 20] : [-20, -10, 0, 10, 20, 30])) { el('line', {x1:x(v), x2:x(v), y1:m.t, y2:H - m.b, stroke:css('--grid')}, s); el('text', {x:x(v), y:H - m.b + 18, 'text-anchor':'middle'}, s).textContent = (v > 0 ? '+' : '') + v + '%'; }
-  for (const v of [-10, 0, 10, 20, 30, 40]) { el('line', {x1:m.l, x2:W - m.r, y1:y(v), y2:y(v), stroke:css('--grid')}, s); el('text', {x:m.l - 8, y:y(v) + 4, 'text-anchor':'end'}, s).textContent = (v > 0 ? '+' : '') + v + '%'; }
-  el('line', {x1:x(-15), y1:y(-15), x2:x(30), y2:y(30), stroke:css('--dim-strong'), 'stroke-dasharray':'5 4', 'stroke-width':1.5}, s);
-  el('text', {x:x(28), y:y(30) - 8, 'text-anchor':'end', style:'font-size:12px'}, s).textContent = 'คนโต = ห้องโต';
-  el('text', {x:x(-20), y:y(41), style:'font-size:13px;font-weight:600'}, s).textContent = narrow() ? '↖ Gap บวก' : '↖ คนมาเพิ่มเร็วกว่าห้อง (Gap บวก)';
-  el('text', {x:x(28), y:y(-12), 'text-anchor':'end', style:'font-size:13px;font-weight:600'}, s).textContent = narrow() ? 'Gap ลบ ↘' : 'ห้องล้น (Gap ลบ) ↘';
-  const star = p => p.tier === 'secondary' && p.st === 6;
-  const order = [...P].sort((a, b) => star(a) - star(b));
-  for (const p of order) {
-    const hi = star(p);
-    const c = el('circle', {cx:x(Math.max(-22, Math.min(30, p.x))), cy:y(p.y), r:hi ? 7 : 5, fill:css(hi ? '--target' : '--dim-strong'), opacity:hi ? 1 : .55, stroke:css('--surface'), 'stroke-width':2}, s);
-    if (hi) { const t = el('text', {x:x(p.x) + 10, y:y(p.y) + 4, style:'font-size:13px;font-weight:600'}, s); t.textContent = p.p; t.style.fill = css('--ink'); }
-    c.addEventListener('mousemove', e => showTip(e, `<b>${p.p}</b><br>ผู้เข้าพักโต ${p.y > 0 ? '+' : ''}${p.y}% · ห้องโต ${p.x > 0 ? '+' : ''}${p.x}%<br>Gap 66→67 ${p.g1 > 0 ? '+' : ''}${p.g1} · 67→68 ${p.g2 > 0 ? '+' : ''}${p.g2} จุด%<br>ผ่านทดสอบ ${p.st}/6`));
-    c.addEventListener('mouseleave', hideTip);
-  }
-}
+/* static fills */
+if ($('#cl-legend')) $('#cl-legend').innerHTML = Object.keys(CLN).map(c => `<span><i style="background:var(${CLV[c]})"></i>${c} ${CLN[c]}</span>`).join('');
+$('#cl-table').innerHTML = Object.keys(CLN).map(c => { const k = D.clusters[c]; return `<tr><td><b>${c}</b> ${CLN[c]}</td><td class="num">${k.n}</td><td class="num">${k.fo}%</td><td class="num">${k.los} วัน</td></tr>`; }).join('');
+$('#pair-rows').innerHTML = D.pairs.map(p => `<tr><td><b>${p.t}</b></td><td>${p.a}</td><td>${p.c}</td><td class="num">${p.sim.toFixed(2)}</td><td class="num">${p.md.toFixed(2)}</td></tr>`).join('') + `<tr><td><b>ชัยภูมิ</b></td><td>— ไม่มี</td><td>C3</td><td></td><td></td></tr>`;
+const chipHost = $('#cp-chips');
+['หนองคาย', 'ลำปาง', 'แม่ฮ่องสอน', 'ระนอง', 'ยะลา'].forEach((t, i) => { const p = PAIR[t]; if (!p) return;
+  const b = document.createElement('button'); b.className = 'chip'; b.type = 'button'; b.id = 'pair-' + i; b.textContent = `${p.t} ↔ ${p.a}`; b.setAttribute('aria-pressed', t === curPair);
+  b.onclick = () => { curPair = t; chipHost.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x === b)); draw($('[data-chart="concept"]')); };
+  chipHost.appendChild(b); });
 
-/* ---------- 06 funnel ---------- */
-function drawFunnel(){
-  const F = D.funnel, lab = ['ทุกจังหวัด', 'G1 ขาดต่อเนื่อง', 'G2 ห้องไม่ว่าง', 'G3 ตลาดไม่เล็ก', 'G4 ฟื้นจากโควิด'];
-  const rows = [...F.map((v, i) => [lab[i], v, false]), ['เมืองรองที่ผ่านครบ 6/6', D.six.length, true]];
-  const W = wOf('ch-funnel'), rh = 38, m = {l:narrow() ? 150 : 210, r:40, t:6}, H = m.t + rows.length * rh;
-  const s = svgBox('ch-funnel', W, H), x = lin(0, 77, m.l, W - m.r);
-  rows.forEach(([name, v, hi], i) => {
-    const yy = m.t + i * rh;
-    el('text', {x:m.l - 10, y:yy + 21, 'text-anchor':'end', style:'font-size:14px'}, s).textContent = name;
-    el('rect', {x:m.l, y:yy + 6, width:Math.max(2, x(v) - m.l), height:rh - 14, rx:4, fill:css(hi ? '--target' : '--accent'), opacity:hi ? 1 : .85}, s);
-    const t = el('text', {x:x(v) + 8, y:yy + 21, style:'font-size:14px;font-weight:600'}, s); t.textContent = v; t.style.fill = css('--ink');
-  });
-  document.getElementById('six').textContent = D.six.join(' · ');
-}
+/* charts: draw when their view is shown; redraw on width change */
+const animated = new WeakSet();
+function draw(host){ if (!host.clientWidth) return; readTokens(); const first = !animated.has(host) && !reduce; animated.add(host); CHARTS[host.dataset.chart](host, first); }
+function drawView(name){ document.querySelectorAll(`[data-view="${name}"] [data-chart]`).forEach(draw); }
+const lastW = new WeakMap();
+const ro = new ResizeObserver(es => es.forEach(e => { const h = e.target, w = Math.round(e.contentRect.width); if (w && lastW.get(h) && Math.abs(lastW.get(h) - w) > 2) { clearTimeout(h._t); h._t = setTimeout(() => draw(h), 120); } lastW.set(h, w); }));
+document.querySelectorAll('[data-chart]').forEach(h => ro.observe(h));
 
-/* ---------- 07 silhouette bars ---------- */
-function drawSil(){
-  const S = Object.entries(D.sil), W = wOf('ch-sil'), rh = 26, m = {l:58, r:44, t:4}, H = m.t + S.length * rh;
-  const s = svgBox('ch-sil', W, H), x = lin(0, .5, m.l, W - m.r);
-  S.forEach(([k, v], i) => {
-    const yy = m.t + i * rh, pick = k === '4';
-    el('text', {x:m.l - 8, y:yy + 17, 'text-anchor':'end'}, s).textContent = k + ' กลุ่ม';
-    el('rect', {x:m.l, y:yy + 5, width:x(v) - m.l, height:rh - 10, rx:3, fill:css(pick ? '--accent' : '--dim')}, s);
-    const t = el('text', {x:x(v) + 6, y:yy + 17, style:'font-family:var(--f-mono)' + (pick ? ';font-weight:600' : '')}, s); t.textContent = v.toFixed(3);
-  });
+/* router: #overview #data #analysis #model #insight #notes */
+const tabs = $('#tabs'), drawer = $('#drawer'), menuBtn = $('#menuBtn');
+document.querySelectorAll('table.stack.long').forEach(t => { const h = [...t.querySelectorAll('thead th')].map(x => x.textContent); t.querySelectorAll('tbody tr').forEach(r => [...r.children].forEach((td, i) => { if (i) td.dataset.l = h[i]; })); });
+const linkHTML = VIEWS.map(([k, l], i) => `<a href="#${k}" data-go="${k}"><span class="n">${i + 1}</span>${l}</a>`).join('');
+tabs.innerHTML = linkHTML; drawer.innerHTML = linkHTML;
+function show(name, scroll = true){
+  if (!VIEWS.some(v => v[0] === name)) name = 'overview';
+  document.querySelectorAll('.view').forEach(v => v.hidden = v.dataset.view !== name);
+  document.querySelectorAll('#tabs a, #drawer a').forEach(a => a.dataset.go === name ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+  const i = VIEWS.findIndex(v => v[0] === name); $('#curPage').textContent = `${i + 1}/${VIEWS.length} · ${VIEWS[i][1]}`;
+  drawer.hidden = true; menuBtn.setAttribute('aria-expanded', 'false');
+  if (scroll) scrollTo({top:0, behavior:'auto'});
+  requestAnimationFrame(() => drawView(name));
+  if (location.hash.slice(1) !== name) { try { history.replaceState(null, '', '#' + name); } catch (e) {} }
 }
+document.addEventListener('click', e => {
+  const go = e.target.closest('[data-go]'); if (go) { e.preventDefault(); show(go.dataset.go); return; }
+  const st = e.target.closest('[data-step]'); if (st) { show(st.dataset.step); return; }
+  const term = e.target.closest('[data-term]'); if (term) { show('notes'); const d = document.getElementById(term.dataset.term); if (d) { requestAnimationFrame(() => { d.scrollIntoView({block:'center'}); d.classList.add('flash'); setTimeout(() => d.classList.remove('flash'), 1600); }); } }
+});
+menuBtn.onclick = () => { drawer.hidden = !drawer.hidden; menuBtn.setAttribute('aria-expanded', String(!drawer.hidden)); menuBtn.setAttribute('aria-label', drawer.hidden ? 'เปิดเมนู' : 'ปิดเมนู'); };
+addEventListener('hashchange', () => show(location.hash.slice(1)));
 
-/* ---------- 07 cluster explorer ---------- */
-const CL_NAME = {C1:'ฮับต่างชาติ พักนาน', C2:'เที่ยวตามฤดู', C3:'คนไทยแวะสั้น', C4:'ตลาดคนไทยทั่วไป'};
-let curCl = 'C4';
-const PAIRSET = new Set([...D.pairs.flatMap(p => [p.t, p.a]), 'ชัยภูมิ']);
-function drawCl(){
-  const P = D.points, W = wOf('ch-cl'), H = narrow() ? 360 : 400, m = {l:48, r:20, t:14, b:40};
-  const s = svgBox('ch-cl', W, H);
-  const lx = v => Math.log10(Math.max(.3, v)), x = lin(lx(.3), lx(100), m.l, W - m.r), y = lin(1.1, 4.4, H - m.b, m.t);
-  for (const v of (narrow() ? [1, 10, 100] : [0.3, 1, 3, 10, 30, 100])) { el('line', {x1:x(lx(v)), x2:x(lx(v)), y1:m.t, y2:H - m.b, stroke:css('--grid')}, s); el('text', {x:x(lx(v)), y:H - m.b + 18, 'text-anchor':'middle'}, s).textContent = v + '%'; }
-  for (const v of [1.5, 2, 2.5, 3, 3.5, 4]) { el('line', {x1:m.l, x2:W - m.r, y1:y(v), y2:y(v), stroke:css('--grid')}, s); el('text', {x:m.l - 8, y:y(v) + 4, 'text-anchor':'end'}, s).textContent = v + ' วัน'; }
-  const inCl = p => p.c === curCl;
-  for (const p of [...P].sort((a, b) => inCl(a) - inCl(b))) {
-    const hi = inCl(p);
-    const c = el('circle', {cx:x(lx(p.fo)), cy:y(p.los), r:hi ? 7 : 4.5, fill:css(hi ? '--accent' : '--dim'), stroke:css('--surface'), 'stroke-width':2}, s);
-    if (hi && PAIRSET.has(p.p)) { const t = el('text', {x:x(lx(p.fo)) + 9, y:y(p.los) + 4, style:'font-size:12px;font-weight:600'}, s); t.textContent = p.p; t.style.fill = css('--ink'); }
-    c.addEventListener('mousemove', e => showTip(e, `<b>${p.p}</b> · กลุ่ม ${p.c}<br>ต่างชาติ ${p.fo}% · พักเฉลี่ย ${p.los} วัน<br>ผู้เข้าพัก ${fmt(p.gu)} คน/ปี`));
-    c.addEventListener('mouseleave', hideTip);
-  }
-  const k = D.clusters[curCl];
-  document.getElementById('cl-members').innerHTML =
-    `<b>${curCl} · ${CL_NAME[curCl]}</b> (${k.n} จังหวัด) · ค่ากลาง: ต่างชาติ <span class="num">${k.fo}%</span>, พัก <span class="num">${k.los}</span> วัน, ผู้เข้าพัก <span class="num">${fmt(k.gu / 1e6, 2)}</span> ล้านคน/ปี<br>` +
-    k.members.join(' · ');
-}
-function initCl(){
-  const host = document.getElementById('cl-chips');
-  for (const c of ['C1', 'C2', 'C3', 'C4']) {
-    const b = document.createElement('button'); b.className = 'chip'; b.type = 'button'; b.id = 'chip-' + c;
-    b.textContent = `${c} ${CL_NAME[c]}`; b.setAttribute('aria-pressed', c === curCl);
-    b.onclick = () => { curCl = c; host.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x === b)); drawCl(); };
-    host.appendChild(b);
-  }
-  const tb = document.getElementById('pair-rows');
-  const rows = [...D.pairs.map(p => [p.t, p.c, p.a]), ['ชัยภูมิ', 'C3', '— ไม่มีเมืองหลักที่เข้าเกณฑ์ในกลุ่มนี้']];
-  tb.innerHTML = rows.map(([t, c, a]) => `<tr><td>${t}</td><td>${c} ${CL_NAME[c]}</td><td>${a}</td></tr>`).join('');
-}
+/* theme */
+function effTheme(){ const t = document.documentElement.dataset.theme; return t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+function curView(){ return document.querySelector('.view:not([hidden])').dataset.view; }
+$('#theme').onclick = () => { const n = effTheme() === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = n; try { localStorage.setItem('theme', n); } catch (e) {} drawView(curView()); };
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => drawView(curView()));
 
-/* ---------- 08 concept pairs ---------- */
-let curPair = 'หนองคาย';
-function drawCp(){
-  const p = D.pairs.find(q => q.t === curPair), rows = [...p.rows].sort((a, b) => b.gap - a.gap);
-  const W = wOf('ch-cp'), rh = narrow() ? 46 : 40, m = {l:narrow() ? 104 : 170, r:narrow() ? 104 : 150, t:4}, H = m.t + rows.length * rh;
-  const s = svgBox('ch-cp', W, H), mx = Math.max(60, ...rows.map(r => Math.max(r.t, r.a))), x = lin(0, mx, m.l, W - m.r);
-  rows.forEach((r, i) => {
-    const yy = m.t + i * rh, bh = (rh - 14) / 2;
-    el('text', {x:m.l - 10, y:yy + rh / 2 + 4, 'text-anchor':'end', style:'font-size:13px'}, s).textContent = r.k;
-    const b1 = el('rect', {x:m.l, y:yy + 5, width:Math.max(1.5, x(r.t) - m.l), height:bh, rx:3, fill:css('--target')}, s);
-    const b2 = el('rect', {x:m.l, y:yy + 7 + bh, width:Math.max(1.5, x(r.a) - m.l), height:bh, rx:3, fill:css('--analog')}, s);
-    const big = r.gap >= 10;
-    const t = el('text', {x:Math.max(x(r.t), x(r.a)) + 8, y:yy + rh / 2 + 4, style:'font-size:12px;font-family:var(--f-mono)' + (big ? ';font-weight:600' : '')}, s);
-    t.textContent = narrow() ? (big ? `+${r.gap}` : `${r.a}%`) : `${r.t}% / ${r.a}%` + (big ? `  (+${r.gap})` : ''); t.style.fill = css(big ? '--ink' : '--ink2');
-    for (const b of [b1, b2]) { b.addEventListener('mousemove', e => showTip(e, `<b>${r.k}</b><br>${p.t} ${r.t}% · ${p.a} ${r.a}%<br>ต่าง ${r.gap > 0 ? '+' : ''}${r.gap} จุด%`)); b.addEventListener('mouseleave', hideTip); }
-  });
-  const top = rows[0];
-  document.getElementById('cp-title').textContent = `${p.t}: เมืองต้นแบบ${p.a}มีที่พักแนว${top.k}มากกว่า ${top.gap} จุด%`;
-  document.getElementById('cp-legend').innerHTML = `<span><i style="background:var(--target)"></i>${p.t} (เมืองรอง)</span><span><i style="background:var(--analog)"></i>${p.a} (เมืองต้นแบบ)</span>`;
-  document.getElementById('cp-cap').innerHTML = `% ของที่พักใน Directory ที่มี concept นั้น · ${p.t} มีที่พักในระบบ ${p.nl} แห่ง ติดป้ายได้ ${p.nt} แห่ง · ความมั่นใจ <span class="pill ${p.conf}">${p.conf === 'ok' ? 'พอใช้' : 'ต่ำ (ข้อมูลน้อย)'}</span>`;
-}
-function initCp(){
-  const host = document.getElementById('cp-chips');
-  const order = ['หนองคาย', 'ลำปาง', 'แม่ฮ่องสอน', 'ระนอง', 'ยะลา'];
-  for (const t of order) {
-    const p = D.pairs.find(q => q.t === t); if (!p) continue;
-    const b = document.createElement('button'); b.className = 'chip'; b.type = 'button'; b.id = 'pair-' + order.indexOf(t);
-    b.textContent = `${p.t} ↔ ${p.a}`; b.setAttribute('aria-pressed', t === curPair);
-    b.onclick = () => { curPair = t; host.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x === b)); drawCp(); };
-    host.appendChild(b);
-  }
-}
-
-function drawAll(){ drawNat(); drawGap(); drawFunnel(); drawSil(); drawCl(); drawCp(); }
-initCl(); initCp(); drawAll();
-let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 150); });
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawAll);
-new MutationObserver(drawAll).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+show(location.hash.slice(1) || 'overview', false);
 </script>
 
 </body>
